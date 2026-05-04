@@ -107,9 +107,11 @@ body::after {
 
 /* Sites grid */
 .sites-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 20px; flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  align-content: flex-start;
 }
 
 .site-card {
@@ -117,6 +119,7 @@ body::after {
   cursor: pointer; position: relative; overflow: hidden;
   transition: border-color 0.25s, transform 0.15s;
   display: flex; flex-direction: column;
+  width: 340px;
 }
 .site-card:hover { transform: translateY(-2px); }
 .site-card::before {
@@ -713,13 +716,13 @@ body::after {
 //  FIREBASE INIT
 // ══════════════════════════════════════════════════════════════
 firebase.initializeApp({
-  apiKey: "AIzaSyANZLxt-LrE3O71AhQ2YBP_BEjcv9OImuE",
-  authDomain: "compteur-securite.firebaseapp.com",
-  databaseURL: "https://compteur-securite-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "compteur-securite",
-  storageBucket: "compteur-securite.firebasestorage.app",
-  messagingSenderId: "752222925843",
-  appId: "1:752222925843:web:3c58778904ba8e2ca77be6"
+  apiKey: "AIzaSyDQnyIU1QfIalA9t7W4tRS6rX8qJbLWrUk",
+  authDomain: "compteur-securite-uosud-est.firebaseapp.com",
+  databaseURL: "https://compteur-securite-uosud-est-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "compteur-securite-uosud-est",
+  storageBucket: "compteur-securite-uosud-est.firebasestorage.app",
+  messagingSenderId: "14435818144",
+  appId: "1:14435818144:web:23bdaf9ec44ffce26f87c5"
 });
 const db = firebase.database();
 const sitesRef = db.ref('sites_v2');
@@ -850,16 +853,20 @@ function renderDashboard(data) {
   // Sort by days desc
   siteIds.sort((a, b) => daysDiff(data[b].startDate) - daysDiff(data[a].startDate));
 
-  grid.innerHTML = siteIds.map(id => {
+  grid.innerHTML = siteIds.map((id, index) => {
     const s = data[id];
     const days = daysDiff(s.startDate);
     const mi = getMeteoIndex(days);
     const m = METEO[mi];
     const isRecord = days > 0 && days >= (s.record || 0);
+    const rankColors = ['#f5c400', '#aaaaaa', '#cd7f32'];
+    const rankColor = index < 3 ? rankColors[index] : '#333';
+    const rankLabel = index < 3 ? ['🥇','🥈','🥉'][index] : `#${index+1}`;
     return `
     <div class="site-card" data-meteo="${mi}" onclick="openSite('${id}')">
       <button class="btn-delete-site" onclick="event.stopPropagation();askDeleteSite('${id}')" title="Supprimer ce site">✕</button>
-      <div class="card-top">
+      <div style="position:absolute;top:10px;left:18px;font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:${rankColor};z-index:2;">${rankLabel}</div>
+      <div class="card-top" style="padding-left:52px;">
         <div>
           <div class="card-name">${escHtml(s.name)}</div>
           ${s.location ? `<div class="card-location">📍 ${escHtml(s.location)}</div>` : ''}
