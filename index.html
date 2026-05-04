@@ -713,13 +713,13 @@ body::after {
 //  FIREBASE INIT
 // ══════════════════════════════════════════════════════════════
 firebase.initializeApp({
-  apiKey: "AIzaSyDQnyIU1QfIalA9t7W4tRS6rX8qJbLWrUk",
-  authDomain: "compteur-securite-uosud-est.firebaseapp.com",
-  databaseURL: "https://compteur-securite-uosud-est-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "compteur-securite-uosud-est",
-  storageBucket: "compteur-securite-uosud-est.firebasestorage.app",
-  messagingSenderId: "14435818144",
-  appId: "1:14435818144:web:23bdaf9ec44ffce26f87c5"
+  apiKey: "AIzaSyANZLxt-LrE3O71AhQ2YBP_BEjcv9OImuE",
+  authDomain: "compteur-securite.firebaseapp.com",
+  databaseURL: "https://compteur-securite-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "compteur-securite",
+  storageBucket: "compteur-securite.firebasestorage.app",
+  messagingSenderId: "752222925843",
+  appId: "1:752222925843:web:3c58778904ba8e2ca77be6"
 });
 const db = firebase.database();
 const sitesRef = db.ref('sites_v2');
@@ -904,18 +904,23 @@ function showScreen(name) {
 }
 
 function goToDashboard() {
-  if (detailListener) { detailListener(); detailListener = null; }
+  if (currentSiteId && detailListener) {
+    sitesRef.child(currentSiteId).off('value', detailListener);
+  }
+  detailListener = null;
   currentSiteId = null;
   showScreen('dashboard');
 }
 
 function openSite(id) {
+  // Détacher l'ancien listener si on change de site
+  if (currentSiteId && detailListener) {
+    sitesRef.child(currentSiteId).off('value', detailListener);
+  }
   currentSiteId = id;
   detailMeteoIndex = -1;
   showScreen('site');
 
-  // Real-time listener for this site
-  if (detailListener) detailListener();
   detailListener = sitesRef.child(id).on('value', snap => {
     const d = snap.val();
     if (!d) { goToDashboard(); return; }
