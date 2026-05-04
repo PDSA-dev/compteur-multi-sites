@@ -3,718 +3,595 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sécurité au travail — Tableau de bord multi-sites</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@300;400;600;700&display=swap" rel="stylesheet">
+<title>Sécurité au travail — RCAD TGV Inoui</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg: #080808;
-  --panel: #0f0f0f;
-  --panel2: #141414;
-  --border: #1e1e1e;
-  --border2: #2a2a2a;
-  --yellow: #f5c400;
-  --yellow-dim: #7a6000;
-  --yellow-glow: rgba(245,196,0,0.15);
-  --orange: #e06820;
-  --white: #ede9e0;
-  --muted: #555;
-  --muted2: #888;
-  --green: #27c97a;
-  --red: #e03b3b;
-  --blue: #3b8fe0;
-  --scan: rgba(255,255,255,0.018);
+  --bg: #07101f;
+  --bg2: #0c1a2e;
+  --panel: rgba(255,255,255,0.04);
+  --panel-hover: rgba(255,255,255,0.07);
+  --border: rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.14);
+  --red: #e8002d;
+  --red-dim: rgba(232,0,45,0.15);
+  --red-glow: rgba(232,0,45,0.3);
+  --white: #f5f7fa;
+  --white2: rgba(245,247,250,0.7);
+  --muted: rgba(245,247,250,0.38);
+  --muted2: rgba(245,247,250,0.55);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --orange: #f97316;
+  --yellow: #eab308;
+  --shadow-card: 0 2px 16px rgba(0,0,0,0.3);
 }
 
-html, body { height: 100%; background: var(--bg); color: var(--white); font-family: 'Barlow Condensed', sans-serif; overflow-x: hidden; }
-
-/* scanlines */
-body::after {
-  content: '';
-  position: fixed; inset: 0;
-  background: repeating-linear-gradient(to bottom, transparent 0px, transparent 3px, var(--scan) 3px, var(--scan) 4px);
-  pointer-events: none; z-index: 9999;
+html, body {
+  height: 100%; min-height: 100vh;
+  background: var(--bg);
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(232,0,45,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 100%, rgba(59,130,246,0.05) 0%, transparent 50%);
+  color: var(--white);
+  font-family: 'DM Sans', sans-serif;
+  overflow-x: hidden;
 }
 
-/* ═══ LAYOUT ═══════════════════════════════════════════════════ */
 .app { display: flex; flex-direction: column; min-height: 100vh; }
+.screen { display: none; flex: 1; flex-direction: column; }
+.screen.active { display: flex; }
 
+/* ═══ TOPBAR ════════════════════════════════════════════════════ */
 .topbar {
+  position: sticky; top: 0; z-index: 200;
   display: flex; align-items: center; justify-content: space-between;
-  padding: 0 28px; height: 54px;
-  background: var(--panel); border-bottom: 2px solid var(--border2);
-  flex-shrink: 0; position: sticky; top: 0; z-index: 100;
+  padding: 0 40px; height: 64px;
+  background: rgba(7,16,31,0.85); backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
 }
-
-.stripe-bar {
-  height: 12px; flex-shrink: 0;
-  background: repeating-linear-gradient(-45deg, var(--yellow) 0px, var(--yellow) 10px, #111 10px, #111 20px);
+.topbar-logo { display: flex; align-items: center; gap: 14px; cursor: pointer; }
+.logo-mark {
+  width: 36px; height: 36px; background: var(--red);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 0.82rem; color: #fff;
+  clip-path: polygon(0 0, 88% 0, 100% 50%, 88% 100%, 0 100%);
 }
-
-.topbar-logo {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.35rem; letter-spacing: 0.3em; color: var(--yellow);
-  display: flex; align-items: center; gap: 12px;
+.logo-text { display: flex; flex-direction: column; gap: 1px; }
+.logo-main { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1rem; letter-spacing: 0.03em; color: var(--white); line-height: 1; }
+.logo-sub  { font-size: 0.67rem; font-weight: 400; color: var(--muted2); letter-spacing: 0.08em; text-transform: uppercase; }
+.topbar-center {
+  display: flex; align-items: center; gap: 7px;
+  background: var(--green-dim); border: 1px solid rgba(34,197,94,0.2);
+  padding: 5px 14px; border-radius: 20px;
 }
-
-.topbar-logo .dot { width: 8px; height: 8px; background: var(--green); border-radius: 50%; animation: pulse 2s infinite; }
-@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.7)} }
-
+.live-dot { width: 7px; height: 7px; background: var(--green); border-radius: 50%; animation: pulse 2.5s infinite; flex-shrink: 0; }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.35;transform:scale(.6)} }
+.live-text { font-size: 0.7rem; font-weight: 500; color: var(--green); letter-spacing: 0.08em; text-transform: uppercase; }
 .topbar-right { display: flex; align-items: center; gap: 16px; }
-.topbar-clock { font-size: 0.72rem; letter-spacing: 0.2em; color: var(--muted2); text-transform: uppercase; }
-
-.btn-add-site {
-  font-family: 'Bebas Neue', sans-serif; font-size: 0.85rem; letter-spacing: 0.25em;
-  padding: 8px 22px; border: 2px solid var(--yellow-dim); color: var(--yellow);
-  background: transparent; cursor: pointer; transition: all 0.2s;
+.topbar-clock { font-size: 0.72rem; color: var(--muted); letter-spacing: 0.04em; }
+.btn-add {
+  font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 0.82rem; letter-spacing: 0.04em;
+  padding: 9px 20px; border-radius: 8px; background: var(--red); border: none; color: #fff;
+  cursor: pointer; transition: all 0.2s;
 }
-.btn-add-site:hover { background: var(--yellow); color: #000; border-color: var(--yellow); }
+.btn-add:hover { background: #c8001f; box-shadow: 0 0 20px var(--red-glow); transform: translateY(-1px); }
 
-/* ═══ SCREENS ═══════════════════════════════════════════════════ */
-.screen { display: none; flex: 1; }
-.screen.active { display: flex; flex-direction: column; }
-
-/* ═══ DASHBOARD ══════════════════════════════════════════════════ */
-#screen-dashboard {
-  padding: 32px 28px;
+/* ═══ DASHBOARD ═════════════════════════════════════════════════ */
+#screen-dashboard { padding: 40px; }
+.dash-eyebrow {
+  font-size: 0.72rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--red); margin-bottom: 8px; display: flex; align-items: center; gap: 8px;
 }
-
-.dash-header {
-  display: flex; align-items: flex-end; justify-content: space-between;
-  margin-bottom: 28px;
-}
-
+.dash-eyebrow::before { content: ''; width: 20px; height: 2px; background: var(--red); }
 .dash-title {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(1.8rem, 4vw, 2.8rem); letter-spacing: 0.2em; color: var(--white);
-  line-height: 1;
+  font-family: 'Outfit', sans-serif; font-weight: 800;
+  font-size: clamp(1.8rem, 3.5vw, 2.6rem); letter-spacing: -0.02em;
+  color: var(--white); line-height: 1.1; margin-bottom: 28px;
 }
-.dash-subtitle { font-size: 0.72rem; letter-spacing: 0.3em; color: var(--muted); text-transform: uppercase; margin-top: 4px; }
-
-.dash-summary {
-  display: flex; gap: 16px; flex-wrap: wrap;
+.summary-strip {
+  display: flex; gap: 1px; background: var(--border);
+  border: 1px solid var(--border2); border-radius: 12px; overflow: hidden; margin-bottom: 36px;
 }
 .sum-box {
-  background: var(--panel); border: 1px solid var(--border2);
-  padding: 12px 24px; text-align: center; min-width: 120px;
+  flex: 1; padding: 20px 24px; background: var(--bg2);
+  display: flex; flex-direction: column; gap: 4px; transition: background 0.2s;
 }
-.sum-label { font-size: 0.6rem; letter-spacing: 0.3em; color: var(--muted); text-transform: uppercase; margin-bottom: 3px; }
-.sum-val { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; letter-spacing: 0.08em; }
+.sum-box:hover { background: var(--panel-hover); }
+.sum-label { font-size: 0.67rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+.sum-val { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1.8rem; letter-spacing: -0.02em; line-height: 1; }
 .sum-val.green { color: var(--green); }
-.sum-val.yellow { color: var(--yellow); }
-.sum-val.red { color: var(--red); }
+.sum-val.red   { color: var(--red); }
+.sum-val.white { color: var(--white); }
 
-/* Sites grid */
-.sites-grid {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 20px;
-  align-content: flex-start;
-}
+.sites-grid { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; }
 
+/* ── Card ── */
 .site-card {
-  background: var(--panel); border: 2px solid var(--border);
-  cursor: pointer; position: relative; overflow: hidden;
-  transition: border-color 0.25s, transform 0.15s;
-  display: flex; flex-direction: column;
-  width: 340px;
+  width: 340px; background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 16px; overflow: hidden; cursor: pointer;
+  transition: all 0.25s; box-shadow: var(--shadow-card);
+  position: relative; display: flex; flex-direction: column;
 }
-.site-card:hover { transform: translateY(-2px); }
-.site-card::before {
-  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
-  width: 4px; transition: background 0.3s;
+.site-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.5); border-color: var(--border2); }
+.card-accent { height: 3px; width: 100%; }
+.card-rank {
+  position: absolute; top: 16px; left: 16px; z-index: 2;
+  font-family: 'Outfit', sans-serif; font-size: 0.82rem; font-weight: 700;
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
 }
-
-/* card per meteo */
-.site-card[data-meteo="0"]::before { background: var(--red); }
-.site-card[data-meteo="0"] { border-color: rgba(224,59,59,0.3); }
-.site-card[data-meteo="1"]::before { background: var(--orange); }
-.site-card[data-meteo="1"] { border-color: rgba(224,104,32,0.3); }
-.site-card[data-meteo="2"]::before { background: var(--yellow); }
-.site-card[data-meteo="2"] { border-color: rgba(245,196,0,0.25); }
-.site-card[data-meteo="3"]::before { background: #7ec85a; }
-.site-card[data-meteo="3"] { border-color: rgba(126,200,90,0.25); }
-.site-card[data-meteo="4"]::before { background: var(--green); }
-.site-card[data-meteo="4"] { border-color: rgba(39,201,122,0.3); }
-
-.card-top {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 14px 18px 10px 22px; border-bottom: 1px solid var(--border);
+.card-head { padding: 16px 18px 0 54px; display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+.card-name { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1rem; color: var(--white); }
+.card-loc  { font-size: 0.68rem; color: var(--muted); margin-top: 2px; }
+.card-badge {
+  font-size: 0.62rem; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase;
+  padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;
 }
-
-.card-name { font-family: 'Bebas Neue', sans-serif; font-size: 1.15rem; letter-spacing: 0.2em; color: var(--white); }
-.card-location { font-size: 0.65rem; letter-spacing: 0.25em; color: var(--muted); text-transform: uppercase; margin-top: 2px; }
-
-.card-meteo-badge {
-  display: flex; align-items: center; gap: 7px;
-  font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
-  padding: 4px 10px; border: 1px solid currentColor; opacity: 0.85;
+.card-counter { padding: 14px 18px; display: flex; align-items: flex-end; gap: 8px; }
+.card-days-num {
+  font-family: 'Outfit', sans-serif; font-weight: 800;
+  font-size: clamp(3rem, 6vw, 4rem); line-height: 1; letter-spacing: -0.03em;
 }
-
-.card-body {
-  display: flex; align-items: center; padding: 20px 22px; flex: 1; gap: 20px;
+.card-days-unit { font-size: 0.85rem; font-weight: 500; color: var(--muted2); padding-bottom: 6px; }
+.card-divider { height: 1px; background: var(--border); margin: 0 18px; }
+.card-stats { padding: 12px 18px; display: flex; flex-direction: column; gap: 7px; flex: 1; }
+.card-stat { display: flex; justify-content: space-between; align-items: center; }
+.cs-label { font-size: 0.66rem; font-weight: 500; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; }
+.cs-val   { font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 0.8rem; color: var(--white2); }
+.cs-val.green { color: var(--green); }
+.card-footer { padding: 11px 18px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.15); }
+.card-record { font-size: 0.63rem; font-weight: 600; color: var(--green); letter-spacing: 0.06em; text-transform: uppercase; display: flex; align-items: center; gap: 5px; opacity: 0; }
+.card-record.visible { opacity: 1; }
+.card-record::before { content: '★'; }
+.card-arrow { color: var(--muted); font-size: 0.88rem; transition: all 0.2s; }
+.site-card:hover .card-arrow { color: var(--white); transform: translateX(4px); }
+.btn-del-card {
+  position: absolute; top: 11px; right: 13px; z-index: 10;
+  background: transparent; border: none; color: var(--muted);
+  font-size: 0.95rem; cursor: pointer; padding: 4px; line-height: 1;
+  transition: all 0.2s; border-radius: 4px;
 }
+.btn-del-card:hover { color: var(--red); background: var(--red-dim); }
 
-.card-days {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(3.5rem, 7vw, 4.8rem);
-  line-height: 1; color: var(--yellow);
-  text-shadow: 0 0 30px rgba(245,196,0,0.3);
-  min-width: 130px;
+.empty-state { width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 100px 20px; gap: 12px; text-align: center; }
+.empty-icon  { font-size: 3rem; opacity: 0.2; }
+.empty-title { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1.2rem; color: var(--muted2); }
+.empty-sub   { font-size: 0.8rem; color: var(--muted); }
+
+/* ═══ SITE DETAIL ════════════════════════════════════════════════ */
+#screen-site { overflow: hidden; min-height: calc(100vh - 64px); }
+.site-nav {
+  display: flex; align-items: center; gap: 16px;
+  padding: 0 40px; height: 50px; flex-shrink: 0;
+  border-bottom: 1px solid var(--border);
+  background: rgba(7,16,31,0.6); backdrop-filter: blur(10px);
 }
-
-.card-days-label {
-  font-size: 0.65rem; letter-spacing: 0.3em; color: var(--muted); text-transform: uppercase; margin-bottom: 8px;
-}
-
-.card-stats { flex: 1; display: flex; flex-direction: column; gap: 6px; }
-.card-stat-line { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid var(--border); padding-bottom: 5px; }
-.card-stat-line:last-child { border-bottom: none; padding-bottom: 0; }
-.csl { font-size: 0.6rem; letter-spacing: 0.22em; color: var(--muted); text-transform: uppercase; }
-.csv { font-family: 'Bebas Neue', sans-serif; font-size: 0.95rem; letter-spacing: 0.08em; color: var(--white); }
-.csv.green { color: var(--green); }
-.csv.red { color: var(--red); }
-
-.card-footer {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 8px 18px 8px 22px; border-top: 1px solid var(--border);
-  background: rgba(0,0,0,0.2);
-}
-.card-record-badge {
-  font-size: 0.6rem; letter-spacing: 0.2em; color: var(--green);
-  text-transform: uppercase; opacity: 0;
-  display: flex; align-items: center; gap: 5px;
-}
-.card-record-badge.visible { opacity: 1; }
-.card-record-badge::before { content: '★'; }
-.card-arrow { color: var(--muted); font-size: 1rem; transition: color 0.2s, transform 0.2s; }
-.site-card:hover .card-arrow { color: var(--yellow); transform: translateX(4px); }
-
-.empty-state {
-  grid-column: 1 / -1; display: flex; flex-direction: column;
-  align-items: center; justify-content: center; padding: 80px 20px;
-  color: var(--muted); text-align: center; gap: 12px;
-}
-.empty-icon { font-size: 3rem; opacity: 0.3; }
-.empty-text { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: 0.25em; color: var(--muted); }
-.empty-sub { font-size: 0.78rem; letter-spacing: 0.15em; }
-
-/* ═══ SITE DETAIL ══════════════════════════════════════════════ */
-#screen-site {
-  flex-direction: column; overflow: hidden;
-}
-
-.site-topbar {
-  display: flex; align-items: center; gap: 18px;
-  padding: 0 28px; height: 48px; flex-shrink: 0;
-  background: var(--panel2); border-bottom: 1px solid var(--border);
-}
-
 .btn-back {
-  font-family: 'Bebas Neue', sans-serif; font-size: 0.85rem; letter-spacing: 0.2em;
-  color: var(--muted2); background: transparent; border: none; cursor: pointer;
-  display: flex; align-items: center; gap: 8px; transition: color 0.2s; padding: 0;
+  display: flex; align-items: center; gap: 6px;
+  font-size: 0.8rem; font-weight: 500; color: var(--muted2);
+  background: transparent; border: none; cursor: pointer; transition: color 0.2s;
 }
-.btn-back:hover { color: var(--yellow); }
+.btn-back:hover { color: var(--white); }
+.btn-back svg { width: 16px; height: 16px; }
+.nav-sep { width: 1px; height: 20px; background: var(--border2); }
+.nav-site-name { font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 0.9rem; color: var(--white); }
+.nav-site-loc  { font-size: 0.7rem; color: var(--muted); margin-left: 6px; }
 
-.site-topbar-name {
-  font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; letter-spacing: 0.25em; color: var(--white);
+.detail-main {
+  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 20px 40px; position: relative; overflow: hidden;
 }
-.site-topbar-loc { font-size: 0.65rem; letter-spacing: 0.25em; color: var(--muted); text-transform: uppercase; }
-
-.site-main {
-  flex: 1; display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  padding: 12px 20px; position: relative; overflow: hidden;
-}
-
-.site-main::before, .site-main::after {
+.detail-main::before {
   content: ''; position: absolute;
-  width: 36px; height: 36px; border-style: solid; border-color: var(--yellow-dim);
-}
-.site-main::before { top: 16px; left: 16px; border-width: 2px 0 0 2px; }
-.site-main::after  { bottom: 16px; right: 16px; border-width: 0 2px 2px 0; }
-
-.label-top {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(1rem, 2.2vw, 1.5rem); letter-spacing: 0.28em; margin-bottom: 3px; color: var(--white);
+  width: 700px; height: 700px; border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.025);
+  top: 50%; left: 50%; transform: translate(-50%,-50%);
+  pointer-events: none;
 }
 
-.site-name-display {
-  font-size: clamp(0.6rem, 1.3vw, 0.8rem); letter-spacing: 0.45em;
-  color: var(--yellow-dim); text-transform: uppercase; margin-bottom: 20px;
-  display: flex; align-items: center; gap: 8px;
+.detail-eyebrow {
+  font-size: 0.68rem; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--muted2); margin-bottom: 4px; display: flex; align-items: center; gap: 7px;
 }
-.live-dot { display: inline-block; width: 8px; height: 8px; background: var(--green); border-radius: 50%; animation: pulse 2s infinite; }
-
-.counter-frame {
-  position: relative; background: #060606; border: 2px solid var(--border2);
-  padding: 14px 50px 10px; margin-bottom: 10px;
-  min-width: clamp(220px, 56vw, 660px); text-align: center;
+.detail-site-label {
+  font-family: 'Outfit', sans-serif; font-weight: 300;
+  font-size: clamp(0.85rem, 1.6vw, 1rem); color: var(--muted2);
+  letter-spacing: 0.1em; margin-bottom: 16px; text-transform: uppercase;
 }
-.counter-frame::before {
-  content: 'JOURS'; position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
-  background: var(--yellow); color: #000;
-  font-family: 'Bebas Neue', sans-serif; font-size: 0.95rem; letter-spacing: 0.3em; padding: 2px 16px;
+.counter-wrap { text-align: center; margin-bottom: 6px; }
+.counter-label {
+  font-size: 0.66rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--white); background: var(--red); padding: 3px 14px; border-radius: 20px;
+  display: inline-block; margin-bottom: 10px;
 }
 .count-number {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(6rem, 20vw, 15rem); line-height: 0.88; color: var(--yellow);
-  text-shadow: 0 0 40px rgba(245,196,0,.4), 0 0 80px rgba(245,196,0,.12); letter-spacing: -0.02em; display: block;
+  font-family: 'Outfit', sans-serif; font-weight: 800;
+  font-size: clamp(6rem, 20vw, 14rem);
+  line-height: 0.88; letter-spacing: -0.04em; display: block; transition: color 0.4s;
 }
-.count-number.flash-red { animation: flashRed 1.4s ease forwards; }
-@keyframes flashRed {
-  0%   { color: var(--red); text-shadow: 0 0 80px rgba(224,59,59,.9); }
-  50%  { color: var(--red); text-shadow: 0 0 30px rgba(224,59,59,.3); }
-  100% { color: var(--yellow); text-shadow: 0 0 40px rgba(245,196,0,.4); }
+.count-number.flash { animation: flashAnim 1.5s ease forwards; }
+@keyframes flashAnim {
+  0%   { color: var(--red); filter: drop-shadow(0 0 30px rgba(232,0,45,0.8)); }
+  60%  { color: var(--red); filter: drop-shadow(0 0 10px rgba(232,0,45,0.3)); }
+  100% { filter: none; }
 }
+.counter-sub { font-family: 'Outfit', sans-serif; font-weight: 300; font-size: clamp(0.85rem, 2vw, 1.3rem); letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted2); margin-bottom: 3px; }
+.counter-tagline { font-size: 0.72rem; color: var(--muted); letter-spacing: 0.06em; margin-bottom: 20px; }
 
-.sans-label   { font-family: 'Bebas Neue', sans-serif; font-size: clamp(0.9rem, 2.6vw, 1.8rem); letter-spacing: 0.4em; color: var(--white); margin-bottom: 2px; }
-.accident-label { font-family: 'Bebas Neue', sans-serif; font-size: clamp(0.9rem, 2.8vw, 2rem); letter-spacing: 0.15em; color: var(--orange); margin-bottom: 10px; }
+.status-label-row { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+.status-icon-big { font-size: 1.8rem; }
+.status-name-big { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: clamp(1rem, 2.2vw, 1.4rem); transition: color 0.4s; }
+.status-desc { font-size: 0.7rem; color: var(--muted); margin-top: 2px; }
 
-/* Météo row */
-.meteo-row {
-  display: flex; align-items: center; gap: 18px;
-  border: 2px solid var(--border); padding: 10px 24px; margin-bottom: 0;
-  min-width: clamp(220px, 56vw, 660px); transition: border-color 0.5s;
+.status-bar {
+  display: flex; border: 1px solid var(--border2); border-radius: 10px; overflow: hidden;
+  margin-bottom: 18px; min-width: clamp(280px, 58vw, 620px); background: var(--bg2);
 }
-.meteo-label { font-family: 'Bebas Neue', sans-serif; font-size: clamp(1.1rem, 2.8vw, 1.9rem); letter-spacing: 0.2em; transition: color 0.5s; }
-.meteo-sub { font-size: 0.62rem; letter-spacing: 0.25em; color: var(--muted); text-transform: uppercase; margin-top: 2px; }
-
-.paliers-row {
-  display: flex; min-width: clamp(220px, 56vw, 660px);
-  border-left: 2px solid var(--border); border-right: 2px solid var(--border); border-bottom: 2px solid var(--border);
-}
-.palier { flex: 1; padding: 6px 3px; text-align: center; border-right: 1px solid #181818; transition: background .3s; }
-.palier:last-child { border-right: none; }
-.palier.active { background: #181818; }
-.palier-days { font-family: 'Bebas Neue', sans-serif; font-size: 0.82rem; letter-spacing: 0.06em; }
-.palier-name { font-size: 0.55rem; letter-spacing: 0.18em; text-transform: uppercase; color: #333; margin-top: 1px; transition: color .3s; }
-.palier.active .palier-name { color: #777; }
+.si { flex: 1; padding: 9px 6px; text-align: center; border-right: 1px solid var(--border); transition: background 0.2s; }
+.si:last-child { border-right: none; }
+.si.active { background: rgba(255,255,255,0.05); }
+.si-icon  { font-size: 1rem; margin-bottom: 2px; }
+.si-name  { font-size: 0.58rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.si-range { font-size: 0.55rem; color: var(--muted); opacity: 0.65; margin-top: 1px; }
 
 .stats-row {
-  display: flex; gap: 14px; margin-bottom: 10px; flex-wrap: wrap; justify-content: center;
+  display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; justify-content: center;
+  min-width: clamp(280px, 58vw, 620px);
 }
-.stat-box {
-  background: var(--panel); border: 1px solid var(--border2);
-  padding: 9px 18px; text-align: center; min-width: 130px;
-}
-.stat-label { font-size: 0.6rem; letter-spacing: 0.3em; color: var(--muted); text-transform: uppercase; margin-bottom: 2px; }
-.stat-value { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: 0.1em; color: var(--white); }
-.stat-value.green { color: var(--green); }
+.stat-box { flex: 1; min-width: 120px; background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 11px 15px; }
+.stat-lbl { font-size: 0.6rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+.stat-val { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1rem; color: var(--white); }
+.stat-val.green { color: var(--green); }
 
-.record-badge {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: rgba(39,201,122,.09); border: 1px solid var(--green);
-  padding: 4px 14px; font-size: 0.68rem; letter-spacing: 0.25em; color: var(--green);
-  text-transform: uppercase; margin-bottom: 8px; opacity: 0;
+.record-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--green-dim); border: 1px solid rgba(34,197,94,0.3);
+  color: var(--green); padding: 5px 16px; border-radius: 20px;
+  font-size: 0.68rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+  margin-bottom: 12px; opacity: 0; transition: opacity 0.3s;
 }
-.record-badge.visible { opacity: 1; }
-.record-badge::before { content: '★'; }
+.record-pill.visible { opacity: 1; }
+.record-pill::before { content: '★ '; }
 
-.actions-row {
-  display: flex; gap: 12px; align-items: center; flex-wrap: wrap; justify-content: center; margin-bottom: 10px;
+.actions-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-bottom: 12px; }
+.btn-action {
+  font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 0.8rem; letter-spacing: 0.04em;
+  padding: 10px 22px; border-radius: 8px; cursor: pointer;
+  display: flex; align-items: center; gap: 7px; transition: all 0.2s;
 }
+.btn-edit  { background: rgba(255,255,255,0.07); border: 1px solid var(--border2); color: var(--white2); }
+.btn-edit:hover { background: rgba(255,255,255,0.12); color: var(--white); }
+.btn-reset { background: var(--red-dim); border: 1px solid rgba(232,0,45,0.3); color: var(--red); }
+.btn-reset:hover { background: var(--red); color: #fff; box-shadow: 0 0 20px var(--red-glow); }
+.date-footer { font-size: 0.67rem; color: var(--muted); letter-spacing: 0.04em; }
 
-.reset-btn, .edit-btn {
-  font-family: 'Bebas Neue', sans-serif; font-size: 0.88rem; letter-spacing: 0.28em;
-  padding: 10px 26px; cursor: pointer; position: relative; overflow: hidden;
-  transition: color 0.2s; background: transparent;
-}
-.reset-btn::before, .edit-btn::before {
-  content: ''; position: absolute; inset: 0; transform: scaleX(0); transform-origin: left; transition: transform .2s; z-index: 0;
-}
-.reset-btn span, .edit-btn span { position: relative; z-index: 1; }
-.reset-btn:active, .edit-btn:active { transform: scale(.97); }
-.reset-btn { border: 2px solid var(--red); color: var(--red); }
-.reset-btn::before { background: var(--red); }
-.reset-btn:hover::before { transform: scaleX(1); }
-.reset-btn:hover { color: #fff; }
-.edit-btn { border: 2px solid var(--yellow-dim); color: var(--yellow); }
-.edit-btn::before { background: var(--yellow); }
-.edit-btn:hover::before { transform: scaleX(1); }
-.edit-btn:hover { color: #000; }
-
-.date-footer { font-size: 0.67rem; letter-spacing: 0.2em; color: var(--muted); text-transform: uppercase; }
-
-/* Ticker */
-.ticker-wrap {
-  overflow: hidden; background: #111; border-top: 2px solid var(--border); display: flex; align-items: center; flex-shrink: 0; transition: border-color .5s;
-}
+.ticker-wrap { overflow: hidden; flex-shrink: 0; background: rgba(0,0,0,0.3); border-top: 1px solid var(--border); display: flex; align-items: center; }
 .ticker-tag {
-  font-family: 'Bebas Neue', sans-serif; font-size: 0.78rem; letter-spacing: 0.25em;
-  padding: 8px 14px; white-space: nowrap; flex-shrink: 0; transition: background .5s, color .5s;
+  font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 0.68rem; letter-spacing: 0.12em;
+  text-transform: uppercase; padding: 9px 18px; white-space: nowrap; flex-shrink: 0; transition: background 0.4s, color 0.4s;
 }
 .ticker-track-outer { overflow: hidden; flex: 1; }
 .ticker-track {
-  display: flex; white-space: nowrap; font-family: 'Barlow Condensed', sans-serif;
-  font-size: 0.78rem; letter-spacing: 0.18em; text-transform: uppercase; padding: 8px 0; color: #bbb;
-  animation: tickScroll 22s linear infinite;
+  display: flex; white-space: nowrap; font-size: 0.73rem; font-weight: 400;
+  letter-spacing: 0.1em; text-transform: uppercase; padding: 9px 0; color: var(--muted2);
+  animation: tickScroll 26s linear infinite;
 }
-.ticker-track span { padding-right: 70px; }
-@keyframes tickScroll { 0%{ transform:translateX(0) } 100%{ transform:translateX(-50%) } }
+.ticker-track span { padding-right: 80px; }
+@keyframes tickScroll { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
 
 /* ═══ OVERLAYS ══════════════════════════════════════════════════ */
-.overlay {
-  display: none; position: fixed; inset: 0; background: rgba(0,0,0,.9); z-index: 500;
-  align-items: center; justify-content: center;
-}
+.overlay { display: none; position: fixed; inset: 0; background: rgba(7,16,31,0.88); backdrop-filter: blur(8px); z-index: 500; align-items: center; justify-content: center; }
 .overlay.active { display: flex; }
-
-.dialog-box {
-  background: #0e0e0e; padding: 36px 44px; text-align: center; max-width: 460px; width: 90%;
+.dialog {
+  background: #0f1e33; border: 1px solid var(--border2); border-radius: 16px;
+  padding: 36px 40px; width: 90%; max-width: 440px; text-align: center;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.6);
 }
-#confirm-overlay .dialog-box  { border: 2px solid var(--red); }
-#edit-overlay .dialog-box     { border: 2px solid var(--yellow-dim); }
-#purge-overlay .dialog-box    { border: 2px solid var(--red); }
-#add-site-overlay .dialog-box { border: 2px solid var(--yellow-dim); }
-#del-site-overlay .dialog-box { border: 2px solid var(--red); }
-#pin-overlay .dialog-box      { border: 2px solid var(--yellow-dim); max-width: 320px; }
-
-.confirm-icon  { font-size: 2.5rem; margin-bottom: 10px; display: block; }
-.confirm-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.7rem; letter-spacing: .2em; color: var(--red); margin-bottom: 8px; }
-.edit-title    { font-family: 'Bebas Neue', sans-serif; font-size: 1.7rem; letter-spacing: .2em; color: var(--yellow); margin-bottom: 8px; }
-.confirm-text, .edit-subtitle { font-size: 0.88rem; color: var(--muted2); letter-spacing: .05em; margin-bottom: 20px; line-height: 1.6; }
-.confirm-btns, .edit-btns { display: flex; gap: 12px; justify-content: center; }
-
-.field-label { font-size: .66rem; letter-spacing: .28em; color: var(--muted); text-transform: uppercase; margin-bottom: 6px; display: block; text-align: left; }
-
-.text-input {
-  width: 100%; background: #060606; border: 2px solid var(--yellow-dim); color: var(--white);
-  font-family: 'Barlow Condensed', sans-serif; font-size: 1.1rem; letter-spacing: .08em;
-  padding: 10px 14px; margin-bottom: 16px; outline: none;
+.dialog-icon  { font-size: 2.2rem; margin-bottom: 10px; display: block; }
+.dialog-title { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.4rem; letter-spacing: -0.01em; margin-bottom: 8px; }
+.dialog-title.red    { color: var(--red); }
+.dialog-title.yellow { color: var(--yellow); }
+.dialog-sub  { font-size: 0.86rem; color: var(--muted2); line-height: 1.6; margin-bottom: 22px; }
+.field-lbl   { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; display: block; text-align: left; }
+.field-input {
+  width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border2); border-radius: 8px;
+  color: var(--white); font-family: 'DM Sans', sans-serif; font-size: 1rem;
+  padding: 10px 14px; margin-bottom: 14px; outline: none; transition: border-color 0.2s;
 }
-.text-input:focus { border-color: var(--yellow); }
-
-.edit-input {
-  width: 100%; background: #060606; border: 2px solid var(--yellow-dim); color: var(--yellow);
-  font-family: 'Bebas Neue', sans-serif; font-size: 2.8rem; letter-spacing: .15em; text-align: center;
-  padding: 8px 14px; margin-bottom: 8px; outline: none; -moz-appearance: textfield;
+.field-input:focus { border-color: rgba(232,0,45,0.5); }
+.field-input-big {
+  width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border2); border-radius: 8px;
+  color: var(--white); font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 2.4rem;
+  text-align: center; padding: 10px 14px; margin-bottom: 8px; outline: none;
+  -moz-appearance: textfield; transition: border-color 0.2s;
 }
-.edit-input::-webkit-outer-spin-button, .edit-input::-webkit-inner-spin-button { -webkit-appearance: none; }
-.edit-input:focus { border-color: var(--yellow); }
-.edit-hint { font-size: .7rem; color: var(--muted); letter-spacing: .1em; margin-bottom: 20px; text-align: left; }
-
-.date-input {
-  width: 100%; background: #060606; border: 2px solid var(--yellow-dim); color: var(--yellow);
-  font-family: 'Barlow Condensed', sans-serif; font-size: 1.1rem; letter-spacing: .1em;
-  padding: 10px 14px; margin-bottom: 20px; outline: none; color-scheme: dark;
+.field-input-big::-webkit-outer-spin-button,
+.field-input-big::-webkit-inner-spin-button { -webkit-appearance: none; }
+.field-input-big:focus { border-color: rgba(232,0,45,0.5); }
+.field-hint { font-size: 0.7rem; color: var(--muted); text-align: left; margin-bottom: 20px; }
+.date-field {
+  width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border2); border-radius: 8px;
+  color: var(--white); font-family: 'DM Sans', sans-serif; font-size: 1rem;
+  padding: 10px 14px; margin-bottom: 20px; outline: none; color-scheme: dark; transition: border-color 0.2s;
 }
-
+.date-field:focus { border-color: rgba(232,0,45,0.5); }
+.dialog-btns { display: flex; gap: 10px; justify-content: center; }
 .btn-confirm {
-  background: var(--red); border: none; color: #fff;
-  font-family: 'Bebas Neue', sans-serif; font-size: .95rem; letter-spacing: .3em; padding: 11px 28px; cursor: pointer;
+  background: var(--red); border: none; color: #fff; border-radius: 8px;
+  font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 0.88rem; letter-spacing: 0.04em;
+  padding: 11px 28px; cursor: pointer; transition: all 0.2s;
 }
-.btn-confirm:hover { background: #c12f2e; }
-.btn-cancel {
-  background: transparent; border: 2px solid var(--border2); color: var(--muted);
-  font-family: 'Bebas Neue', sans-serif; font-size: .95rem; letter-spacing: .3em; padding: 11px 28px; cursor: pointer;
-}
-.btn-cancel:hover { border-color: var(--white); color: var(--white); }
+.btn-confirm:hover { background: #c8001f; box-shadow: 0 0 16px var(--red-glow); }
 .btn-apply {
-  background: var(--yellow); border: none; color: #000;
-  font-family: 'Bebas Neue', sans-serif; font-size: .95rem; letter-spacing: .3em; padding: 11px 28px; cursor: pointer;
+  background: var(--white); border: none; color: #07101f; border-radius: 8px;
+  font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 0.88rem; letter-spacing: 0.04em;
+  padding: 11px 28px; cursor: pointer; transition: all 0.2s;
 }
-.btn-apply:hover { background: #ffd700; }
-
-.purge-warning {
-  background: rgba(224,59,59,.07); border: 1px solid rgba(224,59,59,.3);
-  padding: 9px 13px; font-size: .74rem; color: var(--red); letter-spacing: .08em; margin-bottom: 20px; line-height: 1.5;
+.btn-apply:hover { background: #dde2ed; }
+.btn-cancel {
+  background: transparent; border: 1px solid var(--border2); color: var(--muted2); border-radius: 8px;
+  font-family: 'Outfit', sans-serif; font-weight: 500; font-size: 0.88rem;
+  padding: 11px 28px; cursor: pointer; transition: all 0.2s;
 }
-
-/* Delete site button (per card) */
-.btn-delete-site {
-  position: absolute; top: 8px; right: 10px; z-index: 10;
-  background: transparent; border: none; color: #333; font-size: 0.9rem;
-  cursor: pointer; padding: 4px 6px; transition: color 0.2s; line-height: 1;
+.btn-cancel:hover { border-color: var(--white2); color: var(--white); }
+.warning-box {
+  background: rgba(232,0,45,0.07); border: 1px solid rgba(232,0,45,0.2); border-radius: 8px;
+  padding: 10px 14px; font-size: 0.75rem; color: rgba(232,0,45,0.9); margin-bottom: 20px; line-height: 1.5; text-align: left;
 }
-.btn-delete-site:hover { color: var(--red); }
-
-/* Purge btn */
 .purge-btn {
-  position: fixed; bottom: 20px; right: 20px; z-index: 50;
-  background: transparent; border: 1px solid #1e1e1e; color: #383838;
-  font-family: 'Barlow Condensed', sans-serif; font-size: .6rem; letter-spacing: .22em; text-transform: uppercase;
-  padding: 5px 11px; cursor: pointer; transition: border-color .2s, color .2s;
+  position: fixed; bottom: 18px; right: 18px; z-index: 50;
+  background: transparent; border: 1px solid rgba(255,255,255,0.06); color: var(--muted); border-radius: 6px;
+  font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 5px 12px; cursor: pointer; transition: all 0.2s;
 }
-.purge-btn:hover { border-color: var(--red); color: var(--red); }
+.purge-btn:hover { border-color: rgba(232,0,45,0.4); color: var(--red); }
 
 /* ═══ PIN ═══════════════════════════════════════════════════════ */
-.pin-title   { font-family: 'Bebas Neue', sans-serif; font-size: 1.7rem; letter-spacing: .2em; color: var(--yellow); margin-bottom: 5px; }
-.pin-subtitle { font-size: .76rem; letter-spacing: .15em; color: var(--muted2); margin-bottom: 18px; }
-.pin-display { display: flex; justify-content: center; gap: 11px; margin-bottom: 18px; }
-.pin-dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--yellow-dim); background: transparent; transition: background .15s; }
-.pin-dot.filled { background: var(--yellow); border-color: var(--yellow); }
-.pin-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
-.pin-key {
-  background: #181818; border: 1px solid var(--border2); color: var(--white);
-  font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: .08em;
-  padding: 13px 0; cursor: pointer; transition: background .15s;
+.pin-dialog { max-width: 320px; }
+.pin-title { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.4rem; color: var(--white); margin-bottom: 4px; }
+.pin-sub   { font-size: 0.76rem; color: var(--muted2); margin-bottom: 20px; }
+.pin-dots  { display: flex; justify-content: center; gap: 10px; margin-bottom: 16px; }
+.pin-dot   { width: 13px; height: 13px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.18); background: transparent; transition: all 0.15s; }
+.pin-dot.filled { background: var(--red); border-color: var(--red); }
+.pin-grid  { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 12px; }
+.pin-key   {
+  background: rgba(255,255,255,0.05); border: 1px solid var(--border2); border-radius: 8px;
+  color: var(--white); font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 1.3rem;
+  padding: 14px 0; cursor: pointer; transition: all 0.15s;
 }
-.pin-key:hover { background: #242424; }
-.pin-key:active { background: var(--yellow-dim); }
-.pin-key.del { font-size: 0.85rem; letter-spacing: .04em; color: var(--muted); }
-.pin-error { font-size: .7rem; letter-spacing: .2em; color: var(--red); text-transform: uppercase; height: 16px; margin-bottom: 6px; }
-.pin-change-btn {
-  background: transparent; border: 1px solid #282828; color: #484848;
-  font-family: 'Barlow Condensed', sans-serif; font-size: .68rem; letter-spacing: .22em; text-transform: uppercase;
-  padding: 6px 14px; cursor: pointer; width: 100%; transition: border-color .2s, color .2s;
+.pin-key:hover  { background: rgba(255,255,255,0.1); }
+.pin-key:active { background: rgba(232,0,45,0.2); border-color: rgba(232,0,45,0.4); }
+.pin-key.del { font-size: 0.8rem; font-weight: 500; color: var(--muted2); }
+.pin-err  { font-size: 0.7rem; color: var(--red); letter-spacing: 0.1em; height: 16px; margin-bottom: 8px; }
+.pin-change {
+  background: transparent; border: 1px solid rgba(255,255,255,0.08); color: var(--muted); border-radius: 6px;
+  font-size: 0.67rem; letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 7px 14px; cursor: pointer; width: 100%; transition: all 0.2s;
 }
-.pin-change-btn:hover { border-color: var(--yellow-dim); color: var(--yellow); }
+.pin-change:hover { border-color: rgba(232,0,45,0.3); color: var(--red); }
 
-/* Responsive */
-@media (max-width: 640px) {
-  .topbar { padding: 0 14px; }
-  #screen-dashboard { padding: 20px 14px; }
-  .sites-grid { grid-template-columns: 1fr; }
-  .site-main { padding: 8px 14px; }
-  .meteo-row { padding: 8px 14px; gap: 10px; min-width: unset; width: 100%; }
-  .counter-frame { padding: 12px 20px 10px; min-width: unset; width: 100%; }
-  .paliers-row { min-width: unset; width: 100%; }
-  .stats-row .stat-box { min-width: 100px; padding: 8px 12px; }
-  .dash-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+@media (max-width: 700px) {
+  .topbar { padding: 0 16px; }
+  .topbar-center { display: none; }
+  #screen-dashboard { padding: 20px 16px; }
+  .summary-strip { flex-direction: column; gap: 0; border-radius: 10px; }
+  .sum-box { border-bottom: 1px solid var(--border); }
+  .site-card { width: 100%; max-width: 400px; }
+  .detail-main { padding: 16px 20px; }
+  .status-bar, .stats-row { min-width: unset; width: 100%; }
+  .site-nav { padding: 0 16px; }
 }
 </style>
 </head>
 <body>
 <div class="app">
-  <div class="stripe-bar"></div>
 
-  <!-- TOP BAR -->
   <header class="topbar">
-    <div class="topbar-logo" id="logo-btn" style="cursor:pointer" onclick="goToDashboard()">
-      <span class="dot"></span>
-      SÉCURITÉ AU TRAVAIL
+    <div class="topbar-logo" onclick="goToDashboard()">
+      <div class="logo-mark">RC</div>
+      <div class="logo-text">
+        <div class="logo-main">RCAD Sécurité</div>
+        <div class="logo-sub">TGV Inoui · Centres d'appel</div>
+      </div>
+    </div>
+    <div class="topbar-center">
+      <span class="live-dot"></span>
+      <span class="live-text">Temps réel</span>
     </div>
     <div class="topbar-right">
       <div class="topbar-clock" id="topbar-clock"></div>
-      <button class="btn-add-site" onclick="askWithPin('add-site')">+ Ajouter un site</button>
+      <button class="btn-add" onclick="askWithPin('add-site')">+ Ajouter un site</button>
     </div>
   </header>
 
-  <!-- ═══ DASHBOARD ══════════════════════════════════════════════ -->
+  <!-- DASHBOARD -->
   <div class="screen active" id="screen-dashboard">
-    <div class="dash-header">
-      <div>
-        <div class="dash-title">Tableau de bord</div>
-        <div class="dash-subtitle">Suivi sécurité multi-sites en temps réel</div>
-      </div>
-      <div class="dash-summary">
-        <div class="sum-box"><div class="sum-label">Sites actifs</div><div class="sum-val yellow" id="sum-sites">—</div></div>
-        <div class="sum-box"><div class="sum-label">Total jours cumulés</div><div class="sum-val green" id="sum-days">—</div></div>
-        <div class="sum-box"><div class="sum-label">Sites en alerte</div><div class="sum-val red" id="sum-alert">—</div></div>
-        <div class="sum-box"><div class="sum-label">Meilleur score</div><div class="sum-val" id="sum-best">—</div></div>
-      </div>
+    <div class="dash-eyebrow">Tableau de bord sécurité</div>
+    <div class="dash-title">Jours sans accident du travail</div>
+    <div class="summary-strip">
+      <div class="sum-box"><div class="sum-label">Sites actifs</div><div class="sum-val white" id="sum-sites">—</div></div>
+      <div class="sum-box"><div class="sum-label">Total jours cumulés</div><div class="sum-val green" id="sum-days">—</div></div>
+      <div class="sum-box"><div class="sum-label">Sites en alerte</div><div class="sum-val red" id="sum-alert">—</div></div>
+      <div class="sum-box"><div class="sum-label">Meilleur score</div><div class="sum-val white" id="sum-best">—</div></div>
     </div>
-    <div class="sites-grid" id="sites-grid">
-      <div class="empty-state">
-        <div class="empty-icon">🏭</div>
-        <div class="empty-text">Aucun site configuré</div>
-        <div class="empty-sub">Cliquez sur « + Ajouter un site » pour commencer</div>
-      </div>
-    </div>
+    <div class="sites-grid" id="sites-grid"></div>
   </div>
 
-  <!-- ═══ SITE DETAIL ════════════════════════════════════════════ -->
+  <!-- SITE DETAIL -->
   <div class="screen" id="screen-site">
-    <div class="site-topbar">
-      <button class="btn-back" onclick="goToDashboard()">← Retour</button>
-      <div style="width:1px;height:26px;background:var(--border2);"></div>
+    <div class="site-nav">
+      <button class="btn-back" onclick="goToDashboard()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        Retour
+      </button>
+      <div class="nav-sep"></div>
       <div>
-        <div class="site-topbar-name" id="detail-site-name">—</div>
-        <div class="site-topbar-loc" id="detail-site-loc">—</div>
+        <span class="nav-site-name" id="nav-site-name">—</span>
+        <span class="nav-site-loc"  id="nav-site-loc"></span>
       </div>
     </div>
 
-    <main class="site-main">
-      <div class="label-top">Sécurité au travail</div>
-      <div class="site-name-display">
-        <span class="live-dot"></span>
-        <span id="site-live-name">—</span>
-      </div>
+    <main class="detail-main">
+      <div class="detail-eyebrow"><span class="live-dot"></span> Données en temps réel</div>
+      <div class="detail-site-label" id="detail-site-label">—</div>
 
-      <div class="counter-frame">
+      <div class="counter-wrap">
+        <div class="counter-label">JOURS</div>
         <span class="count-number" id="count">—</span>
       </div>
 
-      <div class="sans-label">Sans accident du travail</div>
-      <div class="accident-label">⚠ Zéro blessure, objectif commun ⚠</div>
+      <div class="counter-sub">Sans accident du travail</div>
+      <div class="counter-tagline" id="counter-tagline">—</div>
 
-      <div class="meteo-row" id="meteo-row">
-        <svg id="meteo-svg" width="56" height="56" viewBox="0 0 80 80" style="flex-shrink:0;"></svg>
+      <div class="status-label-row">
+        <span class="status-icon-big" id="status-icon">—</span>
         <div>
-          <div class="meteo-label" id="meteo-label">—</div>
-          <div class="meteo-sub" id="meteo-sub">—</div>
+          <div class="status-name-big" id="status-name">—</div>
+          <div class="status-desc"    id="status-desc">—</div>
         </div>
-        <div style="flex:1;"></div>
-        <div style="display:flex;gap:5px;">
-          <div class="palier" id="p0" style="min-width:48px;border:1px solid #1a1a1a;">
-            <div class="palier-days" style="color:#e03b3b">0–29j</div>
-            <div class="palier-name">Orage</div>
-          </div>
-          <div class="palier" id="p1" style="min-width:48px;border:1px solid #1a1a1a;">
-            <div class="palier-days" style="color:#e06820">30–89j</div>
-            <div class="palier-name">Pluie</div>
-          </div>
-          <div class="palier" id="p2" style="min-width:48px;border:1px solid #1a1a1a;">
-            <div class="palier-days" style="color:#f5c400">90–179j</div>
-            <div class="palier-name">Nuageux</div>
-          </div>
-          <div class="palier" id="p3" style="min-width:48px;border:1px solid #1a1a1a;">
-            <div class="palier-days" style="color:#7ec85a">180–364j</div>
-            <div class="palier-name">Éclaircie</div>
-          </div>
-          <div class="palier" id="p4" style="min-width:48px;border:1px solid #1a1a1a;">
-            <div class="palier-days" style="color:#27c97a">365j+</div>
-            <div class="palier-name">Soleil</div>
-          </div>
-        </div>
+      </div>
+
+      <div class="status-bar">
+        <div class="si" id="si0"><div class="si-icon">⛈</div><div class="si-name">Alerte</div><div class="si-range">0–29 j</div></div>
+        <div class="si" id="si1"><div class="si-icon">🌧</div><div class="si-name">Vigilance</div><div class="si-range">30–89 j</div></div>
+        <div class="si" id="si2"><div class="si-icon">⛅</div><div class="si-name">Progrès</div><div class="si-range">90–179 j</div></div>
+        <div class="si" id="si3"><div class="si-icon">🌤</div><div class="si-name">Éclaircie</div><div class="si-range">180–364 j</div></div>
+        <div class="si" id="si4"><div class="si-icon">☀️</div><div class="si-name">Excellence</div><div class="si-range">365 j+</div></div>
       </div>
 
       <div class="stats-row">
-        <div class="stat-box"><div class="stat-label">Depuis le</div><div class="stat-value" id="start-date">—</div></div>
-        <div class="stat-box"><div class="stat-label">Record</div><div class="stat-value green" id="record-val">—</div></div>
-        <div class="stat-box"><div class="stat-label">Dernier accident</div><div class="stat-value" id="last-accident">—</div></div>
+        <div class="stat-box"><div class="stat-lbl">Depuis le</div><div class="stat-val" id="start-date">—</div></div>
+        <div class="stat-box"><div class="stat-lbl">Record historique</div><div class="stat-val green" id="record-val">—</div></div>
+        <div class="stat-box"><div class="stat-lbl">Dernier accident</div><div class="stat-val" id="last-accident">—</div></div>
       </div>
 
-      <div class="record-badge" id="record-badge">Nouveau record en cours !</div>
+      <div class="record-pill" id="record-pill">Nouveau record en cours !</div>
 
       <div class="actions-row">
-        <button class="edit-btn" onclick="askWithPin('edit')"><span>✎ Saisir le nombre de jours</span></button>
-        <button class="reset-btn" onclick="askWithPin('reset')"><span>⚠ Signaler un accident</span></button>
+        <button class="btn-action btn-edit"  onclick="askWithPin('edit')">✎ Modifier le compteur</button>
+        <button class="btn-action btn-reset" onclick="askWithPin('reset')">⚠ Signaler un accident</button>
       </div>
 
       <div class="date-footer" id="today-date"></div>
     </main>
 
-    <div class="ticker-wrap" id="ticker-wrap" style="flex-shrink:0;">
-      <div class="ticker-tag" id="ticker-tag">⬥ SÉCURITÉ</div>
+    <div class="ticker-wrap" id="ticker-wrap">
+      <div class="ticker-tag" id="ticker-tag">SÉCURITÉ</div>
       <div class="ticker-track-outer">
         <div class="ticker-track" id="ticker-track"><span id="tick1"></span><span id="tick2"></span></div>
       </div>
     </div>
   </div>
 
-  <div class="stripe-bar"></div>
 </div>
 
-<!-- Purge global -->
-<button class="purge-btn" onclick="askWithPin('purge')">⊗ Réinitialiser toutes les données</button>
+<button class="purge-btn" onclick="askWithPin('purge')">⊗ Réinitialisation totale</button>
 
-<!-- ═══ PIN OVERLAY ═══════════════════════════════════════════════ -->
+<!-- PIN -->
 <div class="overlay" id="pin-overlay">
-  <div class="dialog-box">
-    <div class="pin-title">🔒 Code PIN</div>
-    <div class="pin-subtitle" id="pin-subtitle">Saisissez le code pour continuer</div>
-    <div class="pin-display">
+  <div class="dialog pin-dialog">
+    <div class="pin-title">🔐 Code PIN</div>
+    <div class="pin-sub" id="pin-subtitle">Identifiez-vous pour continuer</div>
+    <div class="pin-dots">
       <div class="pin-dot" id="pd0"></div><div class="pin-dot" id="pd1"></div>
       <div class="pin-dot" id="pd2"></div><div class="pin-dot" id="pd3"></div>
     </div>
-    <div class="pin-error" id="pin-error"></div>
-    <div class="pin-pad">
-      <button class="pin-key" onclick="pinKey('1')">1</button>
-      <button class="pin-key" onclick="pinKey('2')">2</button>
-      <button class="pin-key" onclick="pinKey('3')">3</button>
-      <button class="pin-key" onclick="pinKey('4')">4</button>
-      <button class="pin-key" onclick="pinKey('5')">5</button>
-      <button class="pin-key" onclick="pinKey('6')">6</button>
-      <button class="pin-key" onclick="pinKey('7')">7</button>
-      <button class="pin-key" onclick="pinKey('8')">8</button>
-      <button class="pin-key" onclick="pinKey('9')">9</button>
+    <div class="pin-err" id="pin-error"></div>
+    <div class="pin-grid">
+      <button class="pin-key" onclick="pinKey('1')">1</button><button class="pin-key" onclick="pinKey('2')">2</button><button class="pin-key" onclick="pinKey('3')">3</button>
+      <button class="pin-key" onclick="pinKey('4')">4</button><button class="pin-key" onclick="pinKey('5')">5</button><button class="pin-key" onclick="pinKey('6')">6</button>
+      <button class="pin-key" onclick="pinKey('7')">7</button><button class="pin-key" onclick="pinKey('8')">8</button><button class="pin-key" onclick="pinKey('9')">9</button>
       <button class="pin-key del" onclick="pinKey('C')">Effacer</button>
       <button class="pin-key" onclick="pinKey('0')">0</button>
       <button class="pin-key del" onclick="closeOverlay('pin-overlay');pinReset()">✕</button>
     </div>
-    <button class="pin-change-btn" id="pin-change-btn" onclick="startChangePin()">Modifier le code PIN</button>
+    <button class="pin-change" id="pin-change-btn" onclick="startChangePin()">Modifier le code PIN</button>
   </div>
 </div>
 
-<!-- ═══ ADD SITE OVERLAY ══════════════════════════════════════════ -->
+<!-- ADD SITE -->
 <div class="overlay" id="add-site-overlay">
-  <div class="dialog-box">
-    <div class="edit-title">+ Nouveau site</div>
-    <div class="edit-subtitle">Configurez les informations du nouveau site.</div>
-    <label class="field-label" for="new-site-name">Nom du site *</label>
-    <input class="text-input" type="text" id="new-site-name" placeholder="Ex : RCAD Béziers" maxlength="50" />
-    <label class="field-label" for="new-site-loc">Localisation</label>
-    <input class="text-input" type="text" id="new-site-loc" placeholder="Ex : Zone industrielle Nord" maxlength="60" />
-    <label class="field-label" for="new-site-days">Jours sans accident actuels</label>
-    <input class="edit-input" type="number" id="new-site-days" min="0" max="9999" placeholder="0" style="font-size:2.2rem;" />
-    <div class="edit-btns">
-      <button class="btn-apply" onclick="confirmAddSite()">Créer le site</button>
+  <div class="dialog">
+    <span class="dialog-icon">🏢</span>
+    <div class="dialog-title yellow">Nouveau centre</div>
+    <div class="dialog-sub">Configurez les informations du nouveau centre d'appel.</div>
+    <label class="field-lbl" for="new-site-name">Nom du centre *</label>
+    <input class="field-input" type="text" id="new-site-name" placeholder="Ex : RCAD Lyon" maxlength="50" />
+    <label class="field-lbl" for="new-site-loc">Ville / Localisation</label>
+    <input class="field-input" type="text" id="new-site-loc" placeholder="Ex : Lyon Part-Dieu" maxlength="60" />
+    <label class="field-lbl" for="new-site-days">Jours sans accident actuels</label>
+    <input class="field-input-big" type="number" id="new-site-days" min="0" max="9999" placeholder="0" />
+    <div class="dialog-btns">
+      <button class="btn-apply" onclick="confirmAddSite()">Créer le centre</button>
       <button class="btn-cancel" onclick="closeOverlay('add-site-overlay')">Annuler</button>
     </div>
   </div>
 </div>
 
-<!-- ═══ DELETE SITE OVERLAY ══════════════════════════════════════ -->
+<!-- DELETE SITE -->
 <div class="overlay" id="del-site-overlay">
-  <div class="dialog-box">
-    <span class="confirm-icon">🗑️</span>
-    <div class="confirm-title">Supprimer ce site ?</div>
-    <div class="confirm-text" id="del-site-text">Toutes les données de ce site seront supprimées définitivement.</div>
-    <div class="purge-warning">⚠ Action irréversible — cette opération ne peut pas être annulée.</div>
-    <div class="confirm-btns">
+  <div class="dialog">
+    <span class="dialog-icon">🗑️</span>
+    <div class="dialog-title red">Supprimer ce centre ?</div>
+    <div class="dialog-sub" id="del-site-text">Toutes les données seront supprimées définitivement.</div>
+    <div class="warning-box">⚠ Cette action est irréversible et immédiate.</div>
+    <div class="dialog-btns">
       <button class="btn-confirm" onclick="confirmDeleteSite()">Supprimer</button>
       <button class="btn-cancel" onclick="closeOverlay('del-site-overlay')">Annuler</button>
     </div>
   </div>
 </div>
 
-<!-- ═══ RESET OVERLAY ════════════════════════════════════════════ -->
+<!-- RESET -->
 <div class="overlay" id="confirm-overlay">
-  <div class="dialog-box">
-    <span class="confirm-icon">🚨</span>
-    <div class="confirm-title">Accident déclaré</div>
-    <div class="confirm-text">Remettre le compteur à zéro ?<br>Le record sera conservé.</div>
-    <label class="field-label" for="accident-date">Date de l'accident</label>
-    <input type="date" id="accident-date" class="date-input" />
-    <div class="confirm-btns">
+  <div class="dialog">
+    <span class="dialog-icon">🚨</span>
+    <div class="dialog-title red">Accident à déclarer</div>
+    <div class="dialog-sub">Le compteur sera remis à zéro. Le record sera conservé.</div>
+    <label class="field-lbl" for="accident-date">Date de l'accident</label>
+    <input type="date" id="accident-date" class="date-field" />
+    <div class="dialog-btns">
       <button class="btn-confirm" onclick="confirmReset()">Confirmer</button>
       <button class="btn-cancel" onclick="closeOverlay('confirm-overlay')">Annuler</button>
     </div>
   </div>
 </div>
 
-<!-- ═══ EDIT OVERLAY ════════════════════════════════════════════ -->
+<!-- EDIT -->
 <div class="overlay" id="edit-overlay">
-  <div class="dialog-box">
-    <div class="edit-title">✎ Saisir le compteur</div>
-    <div class="edit-subtitle">Entrez le nombre de jours depuis le dernier accident.</div>
-    <label class="field-label" for="days-input">Nombre de jours</label>
-    <input class="edit-input" type="number" id="days-input" min="0" max="9999" placeholder="0" />
-    <div class="edit-hint">Ex : si le dernier accident remonte à 45 jours, entrez 45.</div>
-    <div class="edit-btns">
+  <div class="dialog">
+    <span class="dialog-icon">✎</span>
+    <div class="dialog-title yellow">Modifier le compteur</div>
+    <div class="dialog-sub">Entrez le nombre de jours sans accident depuis le dernier incident.</div>
+    <label class="field-lbl" for="days-input">Nombre de jours</label>
+    <input class="field-input-big" type="number" id="days-input" min="0" max="9999" placeholder="0" />
+    <div class="field-hint">Le compteur reprendra automatiquement à partir de cette valeur.</div>
+    <div class="dialog-btns">
       <button class="btn-apply" onclick="applyDays()">Appliquer</button>
       <button class="btn-cancel" onclick="closeOverlay('edit-overlay')">Annuler</button>
     </div>
   </div>
 </div>
 
-<!-- ═══ PURGE OVERLAY ════════════════════════════════════════════ -->
+<!-- PURGE -->
 <div class="overlay" id="purge-overlay">
-  <div class="dialog-box">
-    <span class="confirm-icon">⚠️</span>
-    <div class="confirm-title">Réinitialisation totale</div>
-    <div class="confirm-text">Supprime toutes les données de tous les sites (compteurs, records, historique).</div>
-    <div class="purge-warning">⚠ Action irréversible — tous les sites seront supprimés.</div>
-    <div class="confirm-btns">
+  <div class="dialog">
+    <span class="dialog-icon">⚠️</span>
+    <div class="dialog-title red">Réinitialisation totale</div>
+    <div class="dialog-sub">Supprime toutes les données de tous les centres : compteurs, records, historique.</div>
+    <div class="warning-box">⚠ Action irréversible — tous les centres seront supprimés.</div>
+    <div class="dialog-btns">
       <button class="btn-confirm" onclick="confirmPurge()">Tout supprimer</button>
       <button class="btn-cancel" onclick="closeOverlay('purge-overlay')">Annuler</button>
     </div>
   </div>
 </div>
 
-<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
-
 <script>
-// ══════════════════════════════════════════════════════════════
-//  FIREBASE INIT
-// ══════════════════════════════════════════════════════════════
 firebase.initializeApp({
   apiKey: "AIzaSyDQnyIU1QfIalA9t7W4tRS6rX8qJbLWrUk",
   authDomain: "compteur-securite-uosud-est.firebaseapp.com",
@@ -725,477 +602,187 @@ firebase.initializeApp({
   appId: "1:14435818144:web:23bdaf9ec44ffce26f87c5"
 });
 const db = firebase.database();
-const sitesRef = db.ref('sites_v2');
+const sitesRef  = db.ref('sites_v2');
 const configRef = db.ref('config');
 
-// ══════════════════════════════════════════════════════════════
-//  HELPERS
-// ══════════════════════════════════════════════════════════════
-function fmtDate(iso) {
-  if (!iso) return '—';
-  return new Date(iso).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
-}
-
-function daysDiff(isoFrom) {
-  if (!isoFrom) return 0;
-  return Math.max(0, Math.floor((Date.now() - new Date(isoFrom).getTime()) / (1000 * 60 * 60 * 24)));
-}
-
-function dateVeille(isoStart) {
-  if (!isoStart) return '—';
-  const d = new Date(isoStart);
-  d.setDate(d.getDate() - 1);
-  return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
-}
-
-function getMeteoIndex(days) {
-  if (days < 30)  return 0;
-  if (days < 90)  return 1;
-  if (days < 180) return 2;
-  if (days < 365) return 3;
-  return 4;
-}
-
-function renderClock() {
-  const now = new Date();
-  const s = now.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
-            + ' — ' + now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-  const el1 = document.getElementById('topbar-clock');
-  const el2 = document.getElementById('today-date');
-  if (el1) el1.textContent = s;
-  if (el2) el2.textContent = s;
-}
-
-// ══════════════════════════════════════════════════════════════
-//  MÉTÉO CONFIG
-// ══════════════════════════════════════════════════════════════
-const METEO = [
-  {
-    label: 'Orage', sub: '0 à 29 jours', color: '#e03b3b', border: '#e03b3b',
-    tagBg: '#e03b3b', tagColor: '#fff',
-    badgeColor: '#e03b3b',
-    ticker: '⚠ Reprise en cours — chaque jour sans accident compte — mobilisation générale — la sécurité est l\'affaire de tous — ⚠ Reprise en cours — chaque jour sans accident compte',
-    icon: `<ellipse cx="42" cy="34" rx="22" ry="14" fill="#555"/><ellipse cx="28" cy="38" rx="14" ry="10" fill="#444"/><ellipse cx="55" cy="40" rx="12" ry="9" fill="#444"/><line x1="36" y1="52" x2="30" y2="63" stroke="#e03b3b" stroke-width="3" stroke-linecap="round"/><line x1="30" y1="63" x2="36" y2="63" stroke="#e03b3b" stroke-width="3" stroke-linecap="round"/><line x1="36" y1="63" x2="30" y2="73" stroke="#e03b3b" stroke-width="3" stroke-linecap="round"/><line x1="48" y1="54" x2="44" y2="62" stroke="#e03b3b" stroke-width="2.5" stroke-linecap="round"/><line x1="44" y1="62" x2="48" y2="62" stroke="#e03b3b" stroke-width="2.5" stroke-linecap="round"/><line x1="48" y1="62" x2="44" y2="70" stroke="#e03b3b" stroke-width="2.5" stroke-linecap="round"/>`
-  },
-  {
-    label: 'Pluie', sub: '30 à 89 jours', color: '#e06820', border: '#e06820',
-    tagBg: '#e06820', tagColor: '#fff',
-    badgeColor: '#e06820',
-    ticker: '➤ Vigilance maintenue — les bons réflexes s\'installent — continuez les efforts collectifs — signalez tout risque — ➤ Vigilance maintenue — les bons réflexes s\'installent',
-    icon: `<ellipse cx="42" cy="32" rx="22" ry="14" fill="#555"/><ellipse cx="26" cy="36" rx="14" ry="10" fill="#444"/><ellipse cx="56" cy="38" rx="13" ry="9" fill="#444"/><line x1="26" y1="54" x2="22" y2="66" stroke="#e06820" stroke-width="2.5" stroke-linecap="round"/><line x1="36" y1="54" x2="32" y2="66" stroke="#e06820" stroke-width="2.5" stroke-linecap="round"/><line x1="46" y1="54" x2="42" y2="66" stroke="#e06820" stroke-width="2.5" stroke-linecap="round"/><line x1="56" y1="54" x2="52" y2="66" stroke="#e06820" stroke-width="2.5" stroke-linecap="round"/>`
-  },
-  {
-    label: 'Nuageux', sub: '90 à 179 jours', color: '#f5c400', border: '#8a6f00',
-    tagBg: '#f5c400', tagColor: '#000',
-    badgeColor: '#f5c400',
-    ticker: '◆ Bonne dynamique — trois mois sans accident — la prévention paie — restez attentifs aux situations à risque — ◆ Bonne dynamique — trois mois sans accident',
-    icon: `<circle cx="30" cy="26" r="10" fill="#888"/><ellipse cx="46" cy="32" rx="20" ry="13" fill="#777"/><ellipse cx="28" cy="36" rx="14" ry="10" fill="#666"/><ellipse cx="58" cy="38" rx="12" ry="9" fill="#666"/><circle cx="18" cy="22" r="8" fill="#f5c400" opacity=".9"/><line x1="18" y1="8" x2="18" y2="4" stroke="#f5c400" stroke-width="2.5" stroke-linecap="round"/><line x1="18" y1="36" x2="18" y2="40" stroke="#f5c400" stroke-width="2.5" stroke-linecap="round"/><line x1="4" y1="22" x2="0" y2="22" stroke="#f5c400" stroke-width="2.5" stroke-linecap="round"/><line x1="32" y1="22" x2="36" y2="22" stroke="#f5c400" stroke-width="2.5" stroke-linecap="round"/>`
-  },
-  {
-    label: 'Éclaircie', sub: '180 à 364 jours', color: '#7ec85a', border: '#3b6d11',
-    tagBg: '#3b6d11', tagColor: '#c0dd97',
-    badgeColor: '#7ec85a',
-    ticker: '★ Très bonne performance — plus de six mois sans accident — la culture sécurité est bien ancrée — cap sur les 365 jours — ★ Très bonne performance — plus de six mois sans accident',
-    icon: `<circle cx="30" cy="30" r="18" fill="#f5c400"/><line x1="30" y1="6" x2="30" y2="2" stroke="#f5c400" stroke-width="3" stroke-linecap="round"/><line x1="30" y1="58" x2="30" y2="54" stroke="#f5c400" stroke-width="3" stroke-linecap="round"/><line x1="6" y1="30" x2="2" y2="30" stroke="#f5c400" stroke-width="3" stroke-linecap="round"/><line x1="54" y1="30" x2="58" y2="30" stroke="#f5c400" stroke-width="3" stroke-linecap="round"/><line x1="14" y1="14" x2="11" y2="11" stroke="#f5c400" stroke-width="3" stroke-linecap="round"/><line x1="46" y1="14" x2="49" y2="11" stroke="#f5c400" stroke-width="3" stroke-linecap="round"/><ellipse cx="62" cy="52" rx="16" ry="10" fill="#555" opacity=".8"/><ellipse cx="52" cy="56" rx="12" ry="8" fill="#444" opacity=".8"/>`
-  },
-  {
-    label: 'Grand soleil', sub: '365 jours et plus', color: '#27c97a', border: '#27c97a',
-    tagBg: '#27c97a', tagColor: '#000',
-    badgeColor: '#27c97a',
-    ticker: '✦ EXCELLENCE — un an sans accident du travail — performance exceptionnelle — félicitations à toute l\'équipe — zéro blessure, objectif atteint — ✦ EXCELLENCE — un an sans accident du travail',
-    icon: `<circle cx="40" cy="38" r="22" fill="#f5c400"/><line x1="40" y1="10" x2="40" y2="4" stroke="#f5c400" stroke-width="3.5" stroke-linecap="round"/><line x1="40" y1="72" x2="40" y2="66" stroke="#f5c400" stroke-width="3.5" stroke-linecap="round"/><line x1="8" y1="38" x2="2" y2="38" stroke="#f5c400" stroke-width="3.5" stroke-linecap="round"/><line x1="78" y1="38" x2="72" y2="38" stroke="#f5c400" stroke-width="3.5" stroke-linecap="round"/><line x1="17" y1="17" x2="13" y2="13" stroke="#f5c400" stroke-width="3.5" stroke-linecap="round"/><line x1="63" y1="17" x2="67" y2="13" stroke="#f5c400" stroke-width="3.5" stroke-linecap="round"/><line x1="17" y1="59" x2="13" y2="63" stroke="#f5c400" stroke-width="3.5" stroke-linecap="round"/><line x1="63" y1="59" x2="67" y2="63" stroke="#f5c400" stroke-width="3.5" stroke-linecap="round"/>`
-  }
+// Initialiser les 4 centres RCAD si la base est vide
+const RCAD_SITES = [
+  { name: 'RCAD Béziers',   location: 'Béziers' },
+  { name: 'RCAD Marseille', location: 'Marseille' },
+  { name: 'RCAD Chambéry',  location: 'Chambéry' },
+  { name: 'RCAD Valence',   location: 'Valence' }
 ];
-
-// ══════════════════════════════════════════════════════════════
-//  STATE
-// ══════════════════════════════════════════════════════════════
-let currentSiteId = null;
-let currentSiteData = null;
-let siteListeners = {};  // siteId -> unsubscribe
-let allSitesData = {};   // siteId -> data
-let detailListener = null;
-let detailMeteoIndex = -1;
-
-// ══════════════════════════════════════════════════════════════
-//  DASHBOARD
-// ══════════════════════════════════════════════════════════════
-sitesRef.on('value', snap => {
-  const data = snap.val() || {};
-  allSitesData = data;
-  renderDashboard(data);
+sitesRef.once('value').then(snap => {
+  if (!snap.exists()) {
+    RCAD_SITES.forEach(s => sitesRef.push().set({ name: s.name, location: s.location, startDate: new Date().toISOString(), record: 0 }));
+  }
 });
 
+// Status
+const STATUS = [
+  { label:'Alerte',     desc:'0 à 29 jours',       icon:'⛈', color:'#e8002d', bg:'rgba(232,0,45,0.12)',    tagBg:'#e8002d',              tagColor:'#fff',     counterColor:'#e8002d', rankBg:'rgba(232,0,45,0.2)',   rankColor:'#e8002d', ticker:'⚠ Mobilisation générale — chaque jour sans accident compte — la sécurité est notre priorité commune — signalez tout risque immédiatement — ⚠ Mobilisation générale' },
+  { label:'Vigilance',  desc:'30 à 89 jours',       icon:'🌧', color:'#f97316', bg:'rgba(249,115,22,0.1)',   tagBg:'#f97316',              tagColor:'#fff',     counterColor:'#f97316', rankBg:'rgba(249,115,22,0.2)', rankColor:'#f97316', ticker:'➤ Bons réflexes en place — continuez les efforts — signalez tout risque potentiel — ensemble vers une performance durable — ➤ Bons réflexes en place' },
+  { label:'Progrès',    desc:'90 à 179 jours',      icon:'⛅', color:'#eab308', bg:'rgba(234,179,8,0.1)',    tagBg:'rgba(234,179,8,0.15)', tagColor:'#eab308',  counterColor:'#eab308', rankBg:'rgba(234,179,8,0.15)',rankColor:'#eab308', ticker:'◆ Trois mois sans accident — excellente dynamique — la prévention porte ses fruits — cap sur les 180 jours — ◆ Trois mois sans accident' },
+  { label:'Éclaircie',  desc:'180 à 364 jours',     icon:'🌤', color:'#22c55e', bg:'rgba(34,197,94,0.1)',    tagBg:'rgba(34,197,94,0.15)', tagColor:'#22c55e',  counterColor:'#22c55e', rankBg:'rgba(34,197,94,0.15)',rankColor:'#22c55e', ticker:'★ Plus de six mois sans accident — performance remarquable — la culture sécurité est ancrée — cap sur les 365 jours — ★ Plus de six mois sans accident' },
+  { label:'Excellence', desc:'365 jours et plus',   icon:'☀️', color:'#22c55e', bg:'rgba(34,197,94,0.15)',   tagBg:'rgba(34,197,94,0.2)', tagColor:'#22c55e',  counterColor:'#22c55e', rankBg:'rgba(34,197,94,0.2)', rankColor:'#22c55e', ticker:'✦ EXCELLENCE — un an sans accident — performance exceptionnelle — félicitations à toute l\'équipe — zéro blessure, objectif atteint — ✦ EXCELLENCE' }
+];
+function getStatusIdx(d) { if(d<30)return 0; if(d<90)return 1; if(d<180)return 2; if(d<365)return 3; return 4; }
+
+// Helpers
+function fmtDate(iso) { if(!iso)return'—'; return new Date(iso).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric'}); }
+function daysDiff(iso) { if(!iso)return 0; return Math.max(0,Math.floor((Date.now()-new Date(iso).getTime())/86400000)); }
+function dateVeille(iso) { if(!iso)return'—'; const d=new Date(iso); d.setDate(d.getDate()-1); return d.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric'}); }
+function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function renderClock() {
+  const now=new Date();
+  const s=now.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'})+' — '+now.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+  const a=document.getElementById('topbar-clock'); if(a)a.textContent=s;
+  const b=document.getElementById('today-date');   if(b)b.textContent=s;
+}
+
+// State
+let currentSiteId=null, detailListener=null, detailSIdx=-1, allSitesData={};
+
+// Dashboard
+sitesRef.on('value', snap => { allSitesData=snap.val()||{}; renderDashboard(allSitesData); });
+
 function renderDashboard(data) {
-  const grid = document.getElementById('sites-grid');
-  const siteIds = Object.keys(data);
-
-  // Summary
-  let totalDays = 0, alertCount = 0, bestDays = 0, bestSite = '';
-  siteIds.forEach(id => {
-    const s = data[id];
-    const days = daysDiff(s.startDate);
-    totalDays += days;
-    if (days < 30) alertCount++;
-    if (days > bestDays) { bestDays = days; bestSite = s.name; }
-  });
-
-  document.getElementById('sum-sites').textContent = siteIds.length || '0';
-  document.getElementById('sum-days').textContent  = totalDays;
-  document.getElementById('sum-alert').textContent = alertCount;
-  document.getElementById('sum-best').textContent  = bestDays > 0 ? bestDays + ' j' : '—';
-
-  if (siteIds.length === 0) {
-    grid.innerHTML = `<div class="empty-state"><div class="empty-icon">🏭</div><div class="empty-text">Aucun site configuré</div><div class="empty-sub">Cliquez sur « + Ajouter un site » pour commencer</div></div>`;
-    return;
-  }
-
-  // Sort by days desc
-  siteIds.sort((a, b) => daysDiff(data[b].startDate) - daysDiff(data[a].startDate));
-
-  grid.innerHTML = siteIds.map((id, index) => {
-    const s = data[id];
-    const days = daysDiff(s.startDate);
-    const mi = getMeteoIndex(days);
-    const m = METEO[mi];
-    const isRecord = days > 0 && days >= (s.record || 0);
-    const rankColors = ['#f5c400', '#aaaaaa', '#cd7f32'];
-    const rankColor = index < 3 ? rankColors[index] : '#333';
-    const rankLabel = index < 3 ? ['🥇','🥈','🥉'][index] : `#${index+1}`;
-    return `
-    <div class="site-card" data-meteo="${mi}" onclick="openSite('${id}')">
-      <button class="btn-delete-site" onclick="event.stopPropagation();askDeleteSite('${id}')" title="Supprimer ce site">✕</button>
-      <div style="position:absolute;top:10px;left:18px;font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:${rankColor};z-index:2;">${rankLabel}</div>
-      <div class="card-top" style="padding-left:52px;">
-        <div>
-          <div class="card-name">${escHtml(s.name)}</div>
-          ${s.location ? `<div class="card-location">📍 ${escHtml(s.location)}</div>` : ''}
-        </div>
-        <div class="card-meteo-badge" style="color:${m.badgeColor};">
-          <span>${meteoMiniIcon(mi)}</span>${m.label}
-        </div>
+  const ids=Object.keys(data);
+  let total=0,alerts=0,best=0;
+  ids.forEach(id=>{ const d=daysDiff(data[id].startDate); total+=d; if(d<30)alerts++; if(d>best)best=d; });
+  document.getElementById('sum-sites').textContent = ids.length||'0';
+  document.getElementById('sum-days').textContent  = total;
+  document.getElementById('sum-alert').textContent = alerts;
+  document.getElementById('sum-best').textContent  = best>0?best+' j':'—';
+  const grid=document.getElementById('sites-grid');
+  if(!ids.length){ grid.innerHTML=`<div class="empty-state"><div class="empty-icon">🏢</div><div class="empty-title">Aucun centre configuré</div><div class="empty-sub">Cliquez sur « Ajouter un site » pour commencer</div></div>`; return; }
+  ids.sort((a,b)=>daysDiff(data[b].startDate)-daysDiff(data[a].startDate));
+  const medals=['🥇','🥈','🥉'];
+  grid.innerHTML=ids.map((id,i)=>{
+    const s=data[id], days=daysDiff(s.startDate), si=STATUS[getStatusIdx(days)];
+    const isRecord=days>0&&days>=(s.record||0);
+    const rl=i<3?medals[i]:`#${i+1}`;
+    const rs=i<3?`background:${si.rankBg};color:${si.rankColor};`:`background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.25);font-size:0.7rem;`;
+    return`<div class="site-card" onclick="openSite('${id}')">
+      <div class="card-accent" style="background:${si.color};opacity:0.7;"></div>
+      <div class="card-rank" style="${rs}">${rl}</div>
+      <button class="btn-del-card" onclick="event.stopPropagation();askDeleteSite('${id}')" title="Supprimer">✕</button>
+      <div class="card-head">
+        <div><div class="card-name">${escHtml(s.name)}</div>${s.location?`<div class="card-loc">📍 ${escHtml(s.location)}</div>`:''}</div>
+        <div class="card-badge" style="background:${si.bg};color:${si.color};">${si.icon} ${si.label}</div>
       </div>
-      <div class="card-body">
-        <div>
-          <div class="card-days-label">Jours sans accident</div>
-          <div class="card-days" style="color:${m.color};">${days}</div>
-        </div>
-        <div class="card-stats">
-          <div class="card-stat-line"><span class="csl">Depuis le</span><span class="csv">${fmtDate(s.startDate)}</span></div>
-          <div class="card-stat-line"><span class="csl">Record</span><span class="csv green">${s.record > 0 ? s.record + ' j' : '—'}</span></div>
-          <div class="card-stat-line"><span class="csl">Dernier accident</span><span class="csv">${dateVeille(s.startDate)}</span></div>
-        </div>
+      <div class="card-counter">
+        <div class="card-days-num" style="color:${si.color};">${days}</div>
+        <div class="card-days-unit">jours</div>
+      </div>
+      <div class="card-divider"></div>
+      <div class="card-stats">
+        <div class="card-stat"><span class="cs-label">Depuis le</span><span class="cs-val">${fmtDate(s.startDate)}</span></div>
+        <div class="card-stat"><span class="cs-label">Record</span><span class="cs-val green">${s.record>0?s.record+' j':'—'}</span></div>
+        <div class="card-stat"><span class="cs-label">Dernier accident</span><span class="cs-val">${dateVeille(s.startDate)}</span></div>
       </div>
       <div class="card-footer">
-        <div class="card-record-badge ${isRecord ? 'visible' : ''}">Nouveau record en cours</div>
+        <div class="card-record ${isRecord?'visible':''}">Nouveau record</div>
         <div class="card-arrow">→</div>
       </div>
     </div>`;
   }).join('');
 }
 
-function meteoMiniIcon(mi) {
-  return ['⛈','🌧','⛅','🌤','☀️'][mi];
-}
-
-function escHtml(str) {
-  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-// ══════════════════════════════════════════════════════════════
-//  NAVIGATION
-// ══════════════════════════════════════════════════════════════
-function showScreen(name) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById('screen-' + name).classList.add('active');
-}
-
-function goToDashboard() {
-  if (currentSiteId && detailListener) {
-    sitesRef.child(currentSiteId).off('value', detailListener);
-  }
-  detailListener = null;
-  currentSiteId = null;
-  showScreen('dashboard');
-}
-
+// Navigation
+function showScreen(n) { document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById('screen-'+n).classList.add('active'); }
+function goToDashboard() { if(currentSiteId&&detailListener)sitesRef.child(currentSiteId).off('value',detailListener); detailListener=null;currentSiteId=null; showScreen('dashboard'); }
 function openSite(id) {
-  // Détacher l'ancien listener si on change de site
-  if (currentSiteId && detailListener) {
-    sitesRef.child(currentSiteId).off('value', detailListener);
-  }
-  currentSiteId = id;
-  detailMeteoIndex = -1;
-  showScreen('site');
-
-  detailListener = sitesRef.child(id).on('value', snap => {
-    const d = snap.val();
-    if (!d) { goToDashboard(); return; }
-    renderSiteDetail(id, d);
-  });
+  if(currentSiteId&&detailListener)sitesRef.child(currentSiteId).off('value',detailListener);
+  currentSiteId=id; detailSIdx=-1; showScreen('site');
+  detailListener=sitesRef.child(id).on('value',snap=>{ const d=snap.val(); if(!d){goToDashboard();return;} renderDetail(id,d); });
 }
-
-function renderSiteDetail(id, d) {
-  const days = daysDiff(d.startDate);
-  document.getElementById('detail-site-name').textContent = d.name;
-  document.getElementById('detail-site-loc').textContent = d.location || 'Aucune localisation';
-  document.getElementById('site-live-name').textContent = (d.location ? d.name + ' — ' + d.location : d.name);
-  document.getElementById('count').textContent = days;
-  document.getElementById('start-date').textContent = fmtDate(d.startDate);
-  document.getElementById('record-val').textContent = d.record > 0 ? d.record + ' j' : '—';
-  document.getElementById('last-accident').textContent = dateVeille(d.startDate);
-  const badge = document.getElementById('record-badge');
-  badge.classList.toggle('visible', days > 0 && days >= (d.record || 0));
-  updateMeteo(days);
-}
-
-function updateMeteo(days) {
-  const mi = getMeteoIndex(days);
-  if (mi === detailMeteoIndex) return;
-  detailMeteoIndex = mi;
-  const m = METEO[mi];
-  document.getElementById('meteo-svg').innerHTML = m.icon;
-  document.getElementById('meteo-label').textContent = m.label;
-  document.getElementById('meteo-label').style.color = m.color;
-  document.getElementById('meteo-sub').textContent = m.sub;
-  document.getElementById('meteo-row').style.borderColor = m.border;
-  document.getElementById('ticker-wrap').style.borderColor = m.border;
-  const tag = document.getElementById('ticker-tag');
-  tag.style.background = m.tagBg;
-  tag.style.color = m.tagColor;
-  document.getElementById('tick1').textContent = m.ticker;
-  document.getElementById('tick2').textContent = m.ticker;
-  const track = document.getElementById('ticker-track');
-  track.style.animation = 'none'; void track.offsetWidth;
-  track.style.animation = 'tickScroll 22s linear infinite';
-  for (let i = 0; i < 5; i++) document.getElementById('p' + i).classList.toggle('active', i === mi);
-}
-
-// ══════════════════════════════════════════════════════════════
-//  PIN
-// ══════════════════════════════════════════════════════════════
-const DEFAULT_PIN = '1234';
-let currentPin = DEFAULT_PIN;
-let pinBuffer = '';
-let pinAction = '';
-let pinMode = 'auth';
-let newPinBuffer = '';
-
-configRef.child('pin').once('value').then(s => { if (s.val()) currentPin = s.val(); });
-
-const PIN_LABELS = {
-  edit:       'Saisie du compteur',
-  reset:      'Signaler un accident',
-  purge:      'Réinitialisation totale',
-  'add-site': 'Ajouter un site',
-  'del-site': 'Supprimer un site'
-};
-
-function askWithPin(action) {
-  pinAction = action;
-  pinMode = 'auth';
-  pinReset();
-  document.getElementById('pin-subtitle').textContent = PIN_LABELS[action] || 'Code requis';
-  document.getElementById('pin-change-btn').style.display = 'block';
-  document.getElementById('pin-overlay').classList.add('active');
-}
-
-function startChangePin() {
-  pinMode = 'change-old';
-  newPinBuffer = '';
-  pinReset();
-  document.getElementById('pin-subtitle').textContent = 'Ancien code PIN';
-  document.getElementById('pin-change-btn').style.display = 'none';
-}
-
-function pinReset() {
-  pinBuffer = '';
-  for (let i = 0; i < 4; i++) document.getElementById('pd' + i).classList.remove('filled');
-  document.getElementById('pin-error').textContent = '';
-}
-
-function pinKey(k) {
-  if (k === 'C') { if (pinBuffer.length > 0) { pinBuffer = pinBuffer.slice(0, -1); pinRefresh(); } return; }
-  if (pinBuffer.length >= 4) return;
-  pinBuffer += k;
-  pinRefresh();
-  if (pinBuffer.length === 4) setTimeout(pinValidate, 120);
-}
-
-function pinRefresh() {
-  for (let i = 0; i < 4; i++) document.getElementById('pd' + i).classList.toggle('filled', i < pinBuffer.length);
-}
-
-function pinValidate() {
-  if (pinMode === 'auth') {
-    if (pinBuffer === currentPin) {
-      closeOverlay('pin-overlay');
-      pinReset();
-      if (pinAction === 'edit')       openEdit();
-      else if (pinAction === 'reset') askReset();
-      else if (pinAction === 'purge') askPurge();
-      else if (pinAction === 'add-site') openAddSite();
-      else if (pinAction === 'del-site') openDelSite();
-    } else {
-      document.getElementById('pin-error').textContent = 'Code incorrect';
-      setTimeout(pinReset, 900);
-    }
-  } else if (pinMode === 'change-old') {
-    if (pinBuffer === currentPin) {
-      pinMode = 'change-new'; pinReset();
-      document.getElementById('pin-subtitle').textContent = 'Nouveau code PIN';
-    } else {
-      document.getElementById('pin-error').textContent = 'Code incorrect';
-      setTimeout(pinReset, 900);
-    }
-  } else if (pinMode === 'change-new') {
-    newPinBuffer = pinBuffer; pinMode = 'change-confirm'; pinReset();
-    document.getElementById('pin-subtitle').textContent = 'Confirmer le nouveau code';
-  } else if (pinMode === 'change-confirm') {
-    if (pinBuffer === newPinBuffer) {
-      currentPin = newPinBuffer;
-      configRef.child('pin').set(currentPin);
-      closeOverlay('pin-overlay'); pinReset(); pinMode = 'auth'; newPinBuffer = '';
-      const err = document.getElementById('pin-error');
-      err.style.color = '#27c97a'; err.textContent = 'Code modifié ✓';
-    } else {
-      document.getElementById('pin-error').textContent = 'Les codes ne correspondent pas';
-      setTimeout(() => { pinMode = 'change-new'; newPinBuffer = ''; pinReset(); document.getElementById('pin-subtitle').textContent = 'Nouveau code PIN'; }, 900);
-    }
+function renderDetail(id,d) {
+  const days=daysDiff(d.startDate), si=STATUS[getStatusIdx(days)];
+  document.getElementById('nav-site-name').textContent   = d.name;
+  document.getElementById('nav-site-loc').textContent    = d.location?'· '+d.location:'';
+  document.getElementById('detail-site-label').textContent = d.location?d.name+' — '+d.location:d.name;
+  document.getElementById('count').textContent           = days;
+  document.getElementById('count').style.color           = si.counterColor;
+  document.getElementById('start-date').textContent      = fmtDate(d.startDate);
+  document.getElementById('record-val').textContent      = d.record>0?d.record+' j':'—';
+  document.getElementById('last-accident').textContent   = dateVeille(d.startDate);
+  document.getElementById('counter-tagline').textContent = si.desc;
+  document.getElementById('status-icon').textContent     = si.icon;
+  document.getElementById('status-name').textContent     = si.label;
+  document.getElementById('status-name').style.color     = si.color;
+  document.getElementById('status-desc').textContent     = si.desc;
+  document.getElementById('record-pill').classList.toggle('visible',days>0&&days>=(d.record||0));
+  for(let i=0;i<5;i++) document.getElementById('si'+i).classList.toggle('active',i===getStatusIdx(days));
+  const mi=getStatusIdx(days);
+  if(mi!==detailSIdx){
+    detailSIdx=mi;
+    const tag=document.getElementById('ticker-tag');
+    tag.style.background=si.tagBg; tag.style.color=si.tagColor;
+    document.getElementById('tick1').textContent=si.ticker;
+    document.getElementById('tick2').textContent=si.ticker;
+    const track=document.getElementById('ticker-track');
+    track.style.animation='none'; void track.offsetWidth; track.style.animation='tickScroll 26s linear infinite';
   }
 }
 
-// ══════════════════════════════════════════════════════════════
-//  ADD SITE
-// ══════════════════════════════════════════════════════════════
-function openAddSite() {
-  document.getElementById('new-site-name').value = '';
-  document.getElementById('new-site-loc').value = '';
-  document.getElementById('new-site-days').value = '0';
-  document.getElementById('add-site-overlay').classList.add('active');
-  setTimeout(() => document.getElementById('new-site-name').focus(), 80);
-}
-
-function confirmAddSite() {
-  const name = document.getElementById('new-site-name').value.trim();
-  if (!name) { document.getElementById('new-site-name').focus(); return; }
-  const loc  = document.getElementById('new-site-loc').value.trim();
-  const days = parseInt(document.getElementById('new-site-days').value) || 0;
-  const startDate = new Date(Date.now() - days * 86400000).toISOString();
-  const newRef = sitesRef.push();
-  newRef.set({ name, location: loc, startDate, record: days });
-  closeOverlay('add-site-overlay');
-}
-
-document.getElementById('new-site-name').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('new-site-loc').focus(); });
-document.getElementById('new-site-loc').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('new-site-days').focus(); });
-document.getElementById('new-site-days').addEventListener('keydown', e => { if (e.key === 'Enter') confirmAddSite(); if (e.key === 'Escape') closeOverlay('add-site-overlay'); });
-
-// ══════════════════════════════════════════════════════════════
-//  DELETE SITE
-// ══════════════════════════════════════════════════════════════
-let pendingDeleteId = null;
-
-function askDeleteSite(id) {
-  pendingDeleteId = id;
-  askWithPin('del-site');
-}
-
-function openDelSite() {
-  const d = allSitesData[pendingDeleteId];
-  document.getElementById('del-site-text').textContent =
-    d ? `Voulez-vous supprimer le site « ${d.name} » ? Toutes ses données seront perdues.`
-      : 'Toutes les données de ce site seront supprimées.';
-  document.getElementById('del-site-overlay').classList.add('active');
-}
-
-function confirmDeleteSite() {
-  if (pendingDeleteId) {
-    sitesRef.child(pendingDeleteId).remove();
-    if (currentSiteId === pendingDeleteId) goToDashboard();
-    pendingDeleteId = null;
+// PIN
+let currentPin='1234',pinBuffer='',pinAction='',pinMode='auth',newPinBuffer='';
+configRef.child('pin').once('value').then(s=>{if(s.val())currentPin=s.val();});
+const PIN_LABELS={edit:'Modifier le compteur',reset:'Signaler un accident',purge:'Réinitialisation totale','add-site':'Ajouter un centre','del-site':'Supprimer un centre'};
+function askWithPin(action){ pinAction=action;pinMode='auth';pinReset(); document.getElementById('pin-subtitle').textContent=PIN_LABELS[action]||''; document.getElementById('pin-change-btn').style.display='block'; document.getElementById('pin-overlay').classList.add('active'); }
+function startChangePin(){ pinMode='change-old';newPinBuffer='';pinReset(); document.getElementById('pin-subtitle').textContent='Ancien code PIN'; document.getElementById('pin-change-btn').style.display='none'; }
+function pinReset(){ pinBuffer=''; for(let i=0;i<4;i++)document.getElementById('pd'+i).classList.remove('filled'); document.getElementById('pin-error').textContent=''; }
+function pinKey(k){ if(k==='C'){if(pinBuffer.length){pinBuffer=pinBuffer.slice(0,-1);pinRefresh();}return;} if(pinBuffer.length>=4)return; pinBuffer+=k;pinRefresh(); if(pinBuffer.length===4)setTimeout(pinValidate,120); }
+function pinRefresh(){ for(let i=0;i<4;i++)document.getElementById('pd'+i).classList.toggle('filled',i<pinBuffer.length); }
+function pinValidate(){
+  if(pinMode==='auth'){
+    if(pinBuffer===currentPin){ closeOverlay('pin-overlay');pinReset(); if(pinAction==='edit')openEdit(); else if(pinAction==='reset')askReset(); else if(pinAction==='purge')askPurge(); else if(pinAction==='add-site')openAddSite(); else if(pinAction==='del-site')openDelSite(); }
+    else{ document.getElementById('pin-error').textContent='Code incorrect'; setTimeout(pinReset,900); }
+  } else if(pinMode==='change-old'){
+    if(pinBuffer===currentPin){pinMode='change-new';pinReset();document.getElementById('pin-subtitle').textContent='Nouveau code PIN';}
+    else{document.getElementById('pin-error').textContent='Code incorrect';setTimeout(pinReset,900);}
+  } else if(pinMode==='change-new'){
+    newPinBuffer=pinBuffer;pinMode='change-confirm';pinReset();document.getElementById('pin-subtitle').textContent='Confirmer le nouveau code';
+  } else if(pinMode==='change-confirm'){
+    if(pinBuffer===newPinBuffer){currentPin=newPinBuffer;configRef.child('pin').set(currentPin);closeOverlay('pin-overlay');pinReset();pinMode='auth';newPinBuffer='';const e=document.getElementById('pin-error');e.style.color='#22c55e';e.textContent='Code modifié ✓';}
+    else{document.getElementById('pin-error').textContent='Les codes ne correspondent pas';setTimeout(()=>{pinMode='change-new';newPinBuffer='';pinReset();document.getElementById('pin-subtitle').textContent='Nouveau code PIN';},900);}
   }
-  closeOverlay('del-site-overlay');
 }
 
-// ══════════════════════════════════════════════════════════════
-//  RESET (site detail)
-// ══════════════════════════════════════════════════════════════
-function askReset() {
-  const today = new Date().toISOString().split('T')[0];
-  document.getElementById('accident-date').value = today;
-  document.getElementById('confirm-overlay').classList.add('active');
+// Add site
+function openAddSite(){ document.getElementById('new-site-name').value='';document.getElementById('new-site-loc').value='';document.getElementById('new-site-days').value='0';document.getElementById('add-site-overlay').classList.add('active');setTimeout(()=>document.getElementById('new-site-name').focus(),80); }
+function confirmAddSite(){ const name=document.getElementById('new-site-name').value.trim(); if(!name){document.getElementById('new-site-name').focus();return;} const loc=document.getElementById('new-site-loc').value.trim(),days=parseInt(document.getElementById('new-site-days').value)||0,startDate=new Date(Date.now()-days*86400000).toISOString(); sitesRef.push().set({name,location:loc,startDate,record:days}); closeOverlay('add-site-overlay'); }
+document.getElementById('new-site-name').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('new-site-loc').focus();});
+document.getElementById('new-site-loc').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('new-site-days').focus();});
+document.getElementById('new-site-days').addEventListener('keydown',e=>{if(e.key==='Enter')confirmAddSite();if(e.key==='Escape')closeOverlay('add-site-overlay');});
+
+// Delete site
+let pendingDeleteId=null;
+function askDeleteSite(id){pendingDeleteId=id;askWithPin('del-site');}
+function openDelSite(){ const d=allSitesData[pendingDeleteId]; document.getElementById('del-site-text').textContent=d?`Voulez-vous supprimer « ${d.name} » ? Toutes ses données seront perdues.`:'Toutes les données seront supprimées.'; document.getElementById('del-site-overlay').classList.add('active'); }
+function confirmDeleteSite(){ if(pendingDeleteId){sitesRef.child(pendingDeleteId).remove();if(currentSiteId===pendingDeleteId)goToDashboard();pendingDeleteId=null;} closeOverlay('del-site-overlay'); }
+
+// Reset
+function askReset(){ document.getElementById('accident-date').value=new Date().toISOString().split('T')[0]; document.getElementById('confirm-overlay').classList.add('active'); }
+function confirmReset(){
+  const dateVal=document.getElementById('accident-date').value; if(!dateVal||!currentSiteId)return; closeOverlay('confirm-overlay');
+  sitesRef.child(currentSiteId).once('value').then(snap=>{ const d=snap.val()||{startDate:new Date().toISOString(),record:0}; const days=daysDiff(d.startDate),newRecord=days>(d.record||0)?days:(d.record||0),newStart=new Date(new Date(dateVal+'T12:00:00').getTime()+86400000).toISOString(); sitesRef.child(currentSiteId).update({startDate:newStart,record:newRecord}); const el=document.getElementById('count'); el.classList.remove('flash');void el.offsetWidth;el.classList.add('flash');setTimeout(()=>el.classList.remove('flash'),1500); });
 }
 
-function confirmReset() {
-  const dateVal = document.getElementById('accident-date').value;
-  if (!dateVal || !currentSiteId) return;
-  closeOverlay('confirm-overlay');
-  sitesRef.child(currentSiteId).once('value').then(snap => {
-    const d = snap.val() || { startDate: new Date().toISOString(), record: 0 };
-    const days = daysDiff(d.startDate);
-    const newRecord = days > (d.record || 0) ? days : (d.record || 0);
-    const accDate = new Date(dateVal + 'T12:00:00');
-    const newStart = new Date(accDate.getTime() + 86400000).toISOString();
-    sitesRef.child(currentSiteId).update({ startDate: newStart, record: newRecord });
-    const el = document.getElementById('count');
-    el.classList.remove('flash-red'); void el.offsetWidth; el.classList.add('flash-red');
-    setTimeout(() => el.classList.remove('flash-red'), 1400);
-  });
-}
+// Edit
+function openEdit(){ if(!currentSiteId)return; sitesRef.child(currentSiteId).once('value').then(snap=>{ const d=snap.val(); document.getElementById('days-input').value=d?daysDiff(d.startDate):0; document.getElementById('edit-overlay').classList.add('active'); setTimeout(()=>document.getElementById('days-input').select(),50); }); }
+function applyDays(){ const val=parseInt(document.getElementById('days-input').value); if(isNaN(val)||val<0||!currentSiteId)return; sitesRef.child(currentSiteId).once('value').then(snap=>{ const d=snap.val()||{record:0},startDate=new Date(Date.now()-val*86400000).toISOString(),newRecord=val>(d.record||0)?val:(d.record||0); sitesRef.child(currentSiteId).update({startDate,record:newRecord}); closeOverlay('edit-overlay'); }); }
+document.getElementById('days-input').addEventListener('keydown',e=>{if(e.key==='Enter')applyDays();if(e.key==='Escape')closeOverlay('edit-overlay');});
 
-// ══════════════════════════════════════════════════════════════
-//  EDIT (site detail)
-// ══════════════════════════════════════════════════════════════
-function openEdit() {
-  if (!currentSiteId) return;
-  sitesRef.child(currentSiteId).once('value').then(snap => {
-    const d = snap.val();
-    document.getElementById('days-input').value = d ? daysDiff(d.startDate) : 0;
-    document.getElementById('edit-overlay').classList.add('active');
-    setTimeout(() => document.getElementById('days-input').select(), 50);
-  });
-}
+// Purge
+function askPurge(){ document.getElementById('purge-overlay').classList.add('active'); }
+function confirmPurge(){ sitesRef.remove();closeOverlay('purge-overlay');goToDashboard(); }
 
-function applyDays() {
-  const val = parseInt(document.getElementById('days-input').value);
-  if (isNaN(val) || val < 0 || !currentSiteId) { document.getElementById('days-input').focus(); return; }
-  sitesRef.child(currentSiteId).once('value').then(snap => {
-    const d = snap.val() || { record: 0 };
-    const startDate = new Date(Date.now() - val * 86400000).toISOString();
-    const newRecord = val > (d.record || 0) ? val : (d.record || 0);
-    sitesRef.child(currentSiteId).update({ startDate, record: newRecord });
-    closeOverlay('edit-overlay');
-  });
-}
-
-document.getElementById('days-input').addEventListener('keydown', e => {
-  if (e.key === 'Enter') applyDays();
-  if (e.key === 'Escape') closeOverlay('edit-overlay');
-});
-
-// ══════════════════════════════════════════════════════════════
-//  PURGE ALL
-// ══════════════════════════════════════════════════════════════
-function askPurge() {
-  document.getElementById('purge-overlay').classList.add('active');
-}
-
-function confirmPurge() {
-  sitesRef.remove();
-  closeOverlay('purge-overlay');
-  goToDashboard();
-}
-
-// ══════════════════════════════════════════════════════════════
-//  GENERIC
-// ══════════════════════════════════════════════════════════════
-function closeOverlay(id) {
-  document.getElementById(id).classList.remove('active');
-}
+function closeOverlay(id){ document.getElementById(id).classList.remove('active'); }
 
 renderClock();
-setInterval(renderClock, 60000);
+setInterval(renderClock,60000);
 </script>
 </body>
 </html>
