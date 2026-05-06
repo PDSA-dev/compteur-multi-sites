@@ -1074,7 +1074,7 @@ html,body{
   </div>
 </div>
 
-
+<button class="purge-btn" onclick="askWithPin('purge')">⊗ Réinitialisation totale</button>
 
 <!-- ════════ PIN ═══════════════════════════════════ -->
 <div class="overlay" id="pin-overlay">
@@ -1296,6 +1296,7 @@ function renderCarousel(data,ids){
     const isActive=id===selectedPanelId;
     return`<div class="c-card${isActive?' active':''}" id="cc-${id}" onclick="selectSite('${id}')">
       <div style="position:absolute;top:0;left:0;right:0;height:3px;background:${si.color};border-radius:14px 14px 0 0;opacity:.7;"></div>
+      <button class="cc-del" onclick="event.stopPropagation();askDeleteSite('${id}')" title="Supprimer">✕</button>
       <div class="cc-name">${escHtml(s.name)}</div>
       <div class="cc-loc">📍 ${escHtml(s.location||'—')}</div>
       <div class="cc-count" style="color:${si.color}">${days}</div>
@@ -1408,10 +1409,12 @@ function renderPanel(id,d){
   document.getElementById('panel-days').style.color=si.counterColor;
   document.getElementById('panel-tagline').textContent=si.desc;
   document.getElementById('panel-start').textContent=fmtDate(d.startDate);
-  document.getElementById('panel-record').textContent=d.record>0?d.record+' j':'—';
+  const liveRecordP=Math.max(days,d.record||0);
+  if(days>(d.record||0))sitesRef.child(Object.keys(allSitesData).find(k=>allSitesData[k]===d)||selectedPanelId).update({record:days});
+  document.getElementById('panel-record').textContent=liveRecordP>0?liveRecordP+' j':'—';
   document.getElementById('panel-last').textContent=dateVeille(d.startDate);
   const rp=document.getElementById('panel-record-pill');
-  rp.style.display=days>0&&days>=(d.record||0)?'flex':'none';
+  rp.style.display=days>0&&days>=liveRecordP?'flex':'none';
 }
 
 /* ── Carousel navigation ──────────────────────────── */
@@ -1502,14 +1505,16 @@ function renderDetail(id,d){
   const cn=document.getElementById('count');
   cn.textContent=days;cn.style.color=si.counterColor;
   document.getElementById('start-date').textContent=fmtDate(d.startDate);
-  document.getElementById('record-val').textContent=d.record>0?d.record+' j':'—';
+  const liveRecord=Math.max(days,d.record||0);
+  if(days>(d.record||0))sitesRef.child(id).update({record:days});
+  document.getElementById('record-val').textContent=liveRecord>0?liveRecord+' j':'—';
   document.getElementById('last-accident').textContent=dateVeille(d.startDate);
   document.getElementById('counter-tagline').textContent=si.desc;
   document.getElementById('status-icon').textContent=si.icon;
   document.getElementById('status-name').textContent=si.label;
   document.getElementById('status-name').style.color=si.color;
   document.getElementById('status-desc').textContent=si.desc;
-  document.getElementById('record-pill').classList.toggle('visible',days>0&&days>=(d.record||0));
+  document.getElementById('record-pill').classList.toggle('visible',days>0&&days>=liveRecord);
   for(let i=0;i<5;i++)document.getElementById('si'+i).classList.toggle('active',i===getStatusIdx(days));
   const mi=getStatusIdx(days);
   if(mi!==detailSIdx){
