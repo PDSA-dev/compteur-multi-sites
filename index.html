@@ -1364,15 +1364,18 @@ function findSiteIdByCity(city){
   /* Accent/case-insensitive normalizer — fixes 'Chambery' vs 'Chambéry' etc. */
   const norm=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
   const cn=norm(city);
+  const matches=[];
   for(const [id,d] of Object.entries(allSitesData)){
     const ln=norm(d.location||'');
     const nn=norm(d.name||'');
-    if(ln===cn||nn===cn)return id;           // exact match
-    if(ln.includes(cn)||nn.includes(cn))return id; // site contains city
-    if(cn.includes(ln)&&ln.length>3)return id;     // city contains site-loc
-    if(cn.includes(nn)&&nn.length>3)return id;     // city contains site-name
+    if(ln===cn||nn===cn||ln.includes(cn)||nn.includes(cn)||(cn.includes(ln)&&ln.length>3)||(cn.includes(nn)&&nn.length>3)){
+      matches.push({id,days:daysDiff(d.startDate)});
+    }
   }
-  return null;
+  if(!matches.length)return null;
+  // En cas de doublons, retourner le site avec le plus grand nombre de jours
+  matches.sort((a,b)=>b.days-a.days);
+  return matches[0].id;
 }
 
 /* ── Site selection (panel) ───────────────────────── */
@@ -1409,12 +1412,10 @@ function renderPanel(id,d){
   document.getElementById('panel-days').style.color=si.counterColor;
   document.getElementById('panel-tagline').textContent=si.desc;
   document.getElementById('panel-start').textContent=fmtDate(d.startDate);
-  const liveRecordP=Math.max(days,d.record||0);
-  if(days>(d.record||0))sitesRef.child(Object.keys(allSitesData).find(k=>allSitesData[k]===d)||selectedPanelId).update({record:days});
-  document.getElementById('panel-record').textContent=liveRecordP>0?liveRecordP+' j':'—';
+  document.getElementById('panel-record').textContent=d.record>0?d.record+' j':'—';
   document.getElementById('panel-last').textContent=dateVeille(d.startDate);
   const rp=document.getElementById('panel-record-pill');
-  rp.style.display=days>0&&days>=liveRecordP?'flex':'none';
+  rp.style.display=days>0&&days>=(d.record||0)?'flex':'none';
 }
 
 /* ── Carousel navigation ──────────────────────────── */
@@ -1505,16 +1506,14 @@ function renderDetail(id,d){
   const cn=document.getElementById('count');
   cn.textContent=days;cn.style.color=si.counterColor;
   document.getElementById('start-date').textContent=fmtDate(d.startDate);
-  const liveRecord=Math.max(days,d.record||0);
-  if(days>(d.record||0))sitesRef.child(id).update({record:days});
-  document.getElementById('record-val').textContent=liveRecord>0?liveRecord+' j':'—';
+  document.getElementById('record-val').textContent=d.record>0?d.record+' j':'—';
   document.getElementById('last-accident').textContent=dateVeille(d.startDate);
   document.getElementById('counter-tagline').textContent=si.desc;
   document.getElementById('status-icon').textContent=si.icon;
   document.getElementById('status-name').textContent=si.label;
   document.getElementById('status-name').style.color=si.color;
   document.getElementById('status-desc').textContent=si.desc;
-  document.getElementById('record-pill').classList.toggle('visible',days>0&&days>=liveRecord);
+  document.getElementById('record-pill').classList.toggle('visible',days>0&&days>=(d.record||0));
   for(let i=0;i<5;i++)document.getElementById('si'+i).classList.toggle('active',i===getStatusIdx(days));
   const mi=getStatusIdx(days);
   if(mi!==detailSIdx){
