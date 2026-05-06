@@ -1074,7 +1074,7 @@ html,body{
   </div>
 </div>
 
-<button class="purge-btn" onclick="askWithPin('purge')">⊗ Réinitialisation totale</button>
+
 
 <!-- ════════ PIN ═══════════════════════════════════ -->
 <div class="overlay" id="pin-overlay">
@@ -1296,7 +1296,6 @@ function renderCarousel(data,ids){
     const isActive=id===selectedPanelId;
     return`<div class="c-card${isActive?' active':''}" id="cc-${id}" onclick="selectSite('${id}')">
       <div style="position:absolute;top:0;left:0;right:0;height:3px;background:${si.color};border-radius:14px 14px 0 0;opacity:.7;"></div>
-      <button class="cc-del" onclick="event.stopPropagation();askDeleteSite('${id}')" title="Supprimer">✕</button>
       <div class="cc-name">${escHtml(s.name)}</div>
       <div class="cc-loc">📍 ${escHtml(s.location||'—')}</div>
       <div class="cc-count" style="color:${si.color}">${days}</div>
