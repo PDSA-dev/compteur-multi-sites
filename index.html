@@ -3,513 +3,1103 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sécurité au travail — RCAD TGV Inoui</title>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<title>Sécurité RCAD · TGV CARE</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
-:root {
-  --bg: #07101f;
-  --bg2: #0c1a2e;
-  --panel: rgba(255,255,255,0.04);
-  --panel-hover: rgba(255,255,255,0.07);
-  --border: rgba(255,255,255,0.08);
-  --border2: rgba(255,255,255,0.14);
-  --red: #e8002d;
-  --red-dim: rgba(232,0,45,0.15);
-  --red-glow: rgba(232,0,45,0.3);
-  --white: #f5f7fa;
-  --white2: rgba(245,247,250,0.7);
-  --muted: rgba(245,247,250,0.38);
-  --muted2: rgba(245,247,250,0.55);
-  --green: #22c55e;
-  --green-dim: rgba(34,197,94,0.12);
-  --orange: #f97316;
-  --yellow: #eab308;
-  --shadow-card: 0 2px 16px rgba(0,0,0,0.3);
+:root{
+  --bg:       #EEF1F8;
+  --bg2:      #F5F7FC;
+  --glass:    rgba(255,255,255,0.72);
+  --glass2:   rgba(255,255,255,0.88);
+  --glass3:   rgba(255,255,255,0.55);
+  --border:   rgba(0,0,0,0.06);
+  --border2:  rgba(0,0,0,0.10);
+  --red:      #E8002D;
+  --red-dim:  rgba(232,0,45,0.08);
+  --red-glow: rgba(232,0,45,0.22);
+  --red-mid:  rgba(232,0,45,0.18);
+  --ink:      #111318;
+  --ink2:     #3A3F4E;
+  --muted:    #7A8194;
+  --muted2:   #A8B0C0;
+  --green:    #18A05B;
+  --green-dim:rgba(24,160,91,0.09);
+  --orange:   #E07000;
+  --yellow:   #C49A00;
+  --shadow:   0 4px 32px rgba(30,40,80,0.08),0 1px 4px rgba(30,40,80,0.05);
+  --shadow-lg:0 12px 48px rgba(30,40,80,0.14),0 2px 8px rgba(30,40,80,0.06);
+  --r:        18px;
+  --r-sm:     12px;
 }
 
-html, body {
-  height: 100%; min-height: 100vh;
-  background: var(--bg);
+html,body{
+  height:100%;
+  background:var(--bg);
   background-image:
-    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(232,0,45,0.08) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 40% at 80% 100%, rgba(59,130,246,0.05) 0%, transparent 50%);
-  color: var(--white);
-  font-family: 'DM Sans', sans-serif;
-  overflow-x: hidden;
+    radial-gradient(ellipse 70% 50% at 20% 0%,rgba(232,0,45,0.04) 0%,transparent 55%),
+    radial-gradient(ellipse 60% 40% at 80% 100%,rgba(59,130,246,0.05) 0%,transparent 50%),
+    radial-gradient(ellipse 50% 60% at 55% 50%,rgba(255,255,255,0.5) 0%,transparent 70%);
+  color:var(--ink);
+  font-family:'DM Sans',sans-serif;
+  overflow:hidden;
 }
 
-.app { display: flex; flex-direction: column; min-height: 100vh; }
-.screen { display: none; flex: 1; flex-direction: column; }
-.screen.active { display: flex; }
+.app{display:flex;flex-direction:column;height:100vh;overflow:hidden}
+.screen{display:none;flex:1;flex-direction:column;min-height:0}
+.screen.active{display:flex;overflow:hidden}
 
-/* ═══ TOPBAR ════════════════════════════════════════════════════ */
-.topbar {
-  position: sticky; top: 0; z-index: 200;
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0 40px; height: 64px;
-  background: rgba(7,16,31,0.85); backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border);
+/* ═══════════ TOPBAR ════════════════════════════════════ */
+.topbar{
+  position:sticky;top:0;z-index:300;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 32px;height:62px;
+  background:rgba(240,243,250,0.82);
+  backdrop-filter:blur(28px) saturate(1.6);
+  -webkit-backdrop-filter:blur(28px) saturate(1.6);
+  border-bottom:1px solid rgba(255,255,255,0.9);
+  box-shadow:0 1px 0 rgba(0,0,0,0.04),0 2px 12px rgba(30,40,80,0.05);
 }
-.topbar-logo { display: flex; align-items: center; gap: 14px; cursor: pointer; }
-.logo-mark {
-  width: 36px; height: 36px; background: var(--red);
-  display: flex; align-items: center; justify-content: center;
-  font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 0.82rem; color: #fff;
-  clip-path: polygon(0 0, 88% 0, 100% 50%, 88% 100%, 0 100%);
+.topbar-logo{display:flex;align-items:center;gap:12px;cursor:pointer;text-decoration:none}
+.logo-mark{
+  width:34px;height:34px;background:var(--red);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Sora',sans-serif;font-weight:800;font-size:0.75rem;color:#fff;
+  clip-path:polygon(0 0,86% 0,100% 50%,86% 100%,0 100%);
+  flex-shrink:0;
 }
-.logo-text { display: flex; flex-direction: column; gap: 1px; }
-.logo-main { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1rem; letter-spacing: 0.03em; color: var(--white); line-height: 1; }
-.logo-sub  { font-size: 0.67rem; font-weight: 400; color: var(--muted2); letter-spacing: 0.08em; text-transform: uppercase; }
-.topbar-center {
-  display: flex; align-items: center; gap: 7px;
-  background: var(--green-dim); border: 1px solid rgba(34,197,94,0.2);
-  padding: 5px 14px; border-radius: 20px;
+.logo-text{display:flex;flex-direction:column;gap:0px}
+.logo-main{font-family:'Sora',sans-serif;font-weight:700;font-size:0.92rem;color:var(--ink);letter-spacing:-0.01em;line-height:1.2}
+.logo-sub{font-size:0.62rem;font-weight:400;color:var(--muted);letter-spacing:0.07em;text-transform:uppercase}
+.topbar-pill{
+  display:flex;align-items:center;gap:7px;
+  background:var(--green-dim);border:1px solid rgba(24,160,91,0.18);
+  padding:5px 14px;border-radius:20px;
 }
-.live-dot { width: 7px; height: 7px; background: var(--green); border-radius: 50%; animation: pulse 2.5s infinite; flex-shrink: 0; }
-@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.35;transform:scale(.6)} }
-.live-text { font-size: 0.7rem; font-weight: 500; color: var(--green); letter-spacing: 0.08em; text-transform: uppercase; }
-.topbar-right { display: flex; align-items: center; gap: 16px; }
-.topbar-clock { font-size: 0.72rem; color: var(--muted); letter-spacing: 0.04em; }
-.btn-add {
-  font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 0.82rem; letter-spacing: 0.04em;
-  padding: 9px 20px; border-radius: 8px; background: var(--red); border: none; color: #fff;
-  cursor: pointer; transition: all 0.2s;
+.live-dot{width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse 2.4s infinite;flex-shrink:0}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.55)}}
+.live-text{font-size:0.66rem;font-weight:600;color:var(--green);letter-spacing:0.09em;text-transform:uppercase}
+.topbar-right{display:flex;align-items:center;gap:14px}
+.topbar-clock{font-size:0.7rem;color:var(--muted);letter-spacing:0.03em}
+.btn-settings{
+  font-family:'Sora',sans-serif;font-weight:600;font-size:0.75rem;letter-spacing:0.02em;
+  padding:7px 16px;border-radius:10px;
+  background:var(--glass2);border:1px solid var(--border2);color:var(--ink2);
+  cursor:pointer;transition:all .22s;
+  display:flex;align-items:center;gap:7px;
 }
-.btn-add:hover { background: #c8001f; box-shadow: 0 0 20px var(--red-glow); transform: translateY(-1px); }
+.btn-settings svg{transition:transform .4s ease;flex-shrink:0}
+.btn-settings:hover{background:#fff;box-shadow:0 3px 14px rgba(30,40,80,0.1);color:var(--ink)}
+.btn-settings:hover svg{transform:rotate(60deg)}
 
-/* ═══ DASHBOARD ═════════════════════════════════════════════════ */
-#screen-dashboard { padding: 40px; }
-.dash-eyebrow {
-  font-size: 0.72rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase;
-  color: var(--red); margin-bottom: 8px; display: flex; align-items: center; gap: 8px;
+/* ── Settings overlay ─────────────────────────────── */
+.settings-dialog{max-width:480px;text-align:left;max-height:82vh;overflow-y:auto;padding:28px 30px}
+.settings-head{display:flex;align-items:center;gap:12px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.settings-head-icon{font-size:1.4rem;flex-shrink:0}
+.settings-head-text{}
+.settings-head-title{font-family:'Sora',sans-serif;font-weight:800;font-size:1.1rem;color:var(--ink);letter-spacing:-0.01em}
+.settings-head-sub{font-size:0.68rem;color:var(--muted);margin-top:2px}
+.settings-close{
+  margin-left:auto;background:transparent;border:1px solid var(--border2);border-radius:7px;
+  width:30px;height:30px;cursor:pointer;color:var(--muted);font-size:0.8rem;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;transition:all .18s;
 }
-.dash-eyebrow::before { content: ''; width: 20px; height: 2px; background: var(--red); }
-.dash-title {
-  font-family: 'Outfit', sans-serif; font-weight: 800;
-  font-size: clamp(1.8rem, 3.5vw, 2.6rem); letter-spacing: -0.02em;
-  color: var(--white); line-height: 1.1; margin-bottom: 28px;
-}
-.summary-strip {
-  display: flex; gap: 1px; background: var(--border);
-  border: 1px solid var(--border2); border-radius: 12px; overflow: hidden; margin-bottom: 36px;
-}
-.sum-box {
-  flex: 1; padding: 20px 24px; background: var(--bg2);
-  display: flex; flex-direction: column; gap: 4px; transition: background 0.2s;
-}
-.sum-box:hover { background: var(--panel-hover); }
-.sum-label { font-size: 0.67rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
-.sum-val { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1.8rem; letter-spacing: -0.02em; line-height: 1; }
-.sum-val.green { color: var(--green); }
-.sum-val.red   { color: var(--red); }
-.sum-val.white { color: var(--white); }
+.settings-close:hover{color:var(--red);border-color:rgba(232,0,45,0.3);background:var(--red-dim)}
 
-.sites-grid { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; }
+.settings-section{font-size:0.6rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.settings-sites{display:flex;flex-direction:column;gap:7px;margin-bottom:14px}
+.settings-site-row{
+  display:flex;align-items:center;gap:10px;
+  background:rgba(0,0,0,0.025);border:1px solid var(--border);border-radius:10px;
+  padding:10px 12px;
+}
+.settings-site-info{flex:1;min-width:0}
+.settings-site-name{font-family:'Sora',sans-serif;font-weight:600;font-size:0.85rem;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.settings-site-loc{font-size:0.65rem;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.settings-site-badge{font-size:0.62rem;font-weight:700;padding:3px 9px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+.btn-site-edit,.btn-site-del{
+  background:transparent;border:1px solid var(--border);border-radius:7px;
+  width:29px;height:29px;cursor:pointer;font-size:0.78rem;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .18s;color:var(--muted);flex-shrink:0;
+}
+.btn-site-edit:hover{color:var(--orange);border-color:rgba(224,112,0,0.35);background:rgba(224,112,0,0.06)}
+.btn-site-del:hover{color:var(--red);border-color:rgba(232,0,45,0.3);background:var(--red-dim)}
 
-/* ── Card ── */
-.site-card {
-  width: 340px; background: var(--bg2); border: 1px solid var(--border);
-  border-radius: 16px; overflow: hidden; cursor: pointer;
-  transition: all 0.25s; box-shadow: var(--shadow-card);
-  position: relative; display: flex; flex-direction: column;
+.btn-settings-add{
+  width:100%;border:1.5px dashed var(--border2);border-radius:10px;
+  padding:10px;background:transparent;color:var(--muted);
+  font-family:'Sora',sans-serif;font-weight:600;font-size:0.78rem;
+  cursor:pointer;transition:all .2s;
+  display:flex;align-items:center;justify-content:center;gap:7px;margin-bottom:0;
 }
-.site-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.5); border-color: var(--border2); }
-.card-accent { height: 3px; width: 100%; }
-.card-rank {
-  position: absolute; top: 16px; left: 16px; z-index: 2;
-  font-family: 'Outfit', sans-serif; font-size: 0.82rem; font-weight: 700;
-  width: 28px; height: 28px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-}
-.card-head { padding: 16px 18px 0 54px; display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
-.card-name { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1rem; color: var(--white); }
-.card-loc  { font-size: 0.68rem; color: var(--muted); margin-top: 2px; }
-.card-badge {
-  font-size: 0.62rem; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase;
-  padding: 4px 10px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;
-}
-.card-counter { padding: 14px 18px; display: flex; align-items: flex-end; gap: 8px; }
-.card-days-num {
-  font-family: 'Outfit', sans-serif; font-weight: 800;
-  font-size: clamp(3rem, 6vw, 4rem); line-height: 1; letter-spacing: -0.03em;
-}
-.card-days-unit { font-size: 0.85rem; font-weight: 500; color: var(--muted2); padding-bottom: 6px; }
-.card-divider { height: 1px; background: var(--border); margin: 0 18px; }
-.card-stats { padding: 12px 18px; display: flex; flex-direction: column; gap: 7px; flex: 1; }
-.card-stat { display: flex; justify-content: space-between; align-items: center; }
-.cs-label { font-size: 0.66rem; font-weight: 500; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; }
-.cs-val   { font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 0.8rem; color: var(--white2); }
-.cs-val.green { color: var(--green); }
-.card-footer { padding: 11px 18px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.15); }
-.card-record { font-size: 0.63rem; font-weight: 600; color: var(--green); letter-spacing: 0.06em; text-transform: uppercase; display: flex; align-items: center; gap: 5px; opacity: 0; }
-.card-record.visible { opacity: 1; }
-.card-record::before { content: '★'; }
-.card-arrow { color: var(--muted); font-size: 0.88rem; transition: all 0.2s; }
-.site-card:hover .card-arrow { color: var(--white); transform: translateX(4px); }
-.btn-del-card {
-  position: absolute; top: 11px; right: 13px; z-index: 10;
-  background: transparent; border: none; color: var(--muted);
-  font-size: 0.95rem; cursor: pointer; padding: 4px; line-height: 1;
-  transition: all 0.2s; border-radius: 4px;
-}
-.btn-del-card:hover { color: var(--red); background: var(--red-dim); }
+.btn-settings-add:hover{border-color:var(--red);color:var(--red);background:var(--red-dim)}
 
-.empty-state { width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 100px 20px; gap: 12px; text-align: center; }
-.empty-icon  { font-size: 3rem; opacity: 0.2; }
-.empty-title { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1.2rem; color: var(--muted2); }
-.empty-sub   { font-size: 0.8rem; color: var(--muted); }
+/* Inline add form inside settings */
+.settings-add-form{
+  background:rgba(0,0,0,0.025);border:1px solid var(--border);border-radius:10px;
+  padding:14px;margin-bottom:0;display:none;flex-direction:column;gap:0;
+}
+.settings-add-form.visible{display:flex}
+.settings-add-form .field-input{margin-bottom:10px}
+.settings-add-form .field-input-big{margin-bottom:6px}
 
-/* ═══ SITE DETAIL ════════════════════════════════════════════════ */
-#screen-site { overflow: hidden; min-height: calc(100vh - 64px); }
-.site-nav {
-  display: flex; align-items: center; gap: 16px;
-  padding: 0 40px; height: 50px; flex-shrink: 0;
-  border-bottom: 1px solid var(--border);
-  background: rgba(7,16,31,0.6); backdrop-filter: blur(10px);
-}
-.btn-back {
-  display: flex; align-items: center; gap: 6px;
-  font-size: 0.8rem; font-weight: 500; color: var(--muted2);
-  background: transparent; border: none; cursor: pointer; transition: color 0.2s;
-}
-.btn-back:hover { color: var(--white); }
-.btn-back svg { width: 16px; height: 16px; }
-.nav-sep { width: 1px; height: 20px; background: var(--border2); }
-.nav-site-name { font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 0.9rem; color: var(--white); }
-.nav-site-loc  { font-size: 0.7rem; color: var(--muted); margin-left: 6px; }
-
-.detail-main {
-  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-  padding: 20px 40px; position: relative; overflow: hidden;
-}
-.detail-main::before {
-  content: ''; position: absolute;
-  width: 700px; height: 700px; border-radius: 50%;
-  border: 1px solid rgba(255,255,255,0.025);
-  top: 50%; left: 50%; transform: translate(-50%,-50%);
-  pointer-events: none;
+/* ═══════════ DASHBOARD ═════════════════════════════════ */
+/* NOTE: display:flex + flex-direction:column come from .screen.active — never override here with ID selector */
+#screen-dashboard{
+  overflow:hidden;
+  padding:14px 28px 0;
 }
 
-.detail-eyebrow {
-  font-size: 0.68rem; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase;
-  color: var(--muted2); margin-bottom: 4px; display: flex; align-items: center; gap: 7px;
-}
-.detail-site-label {
-  font-family: 'Outfit', sans-serif; font-weight: 300;
-  font-size: clamp(0.85rem, 1.6vw, 1rem); color: var(--muted2);
-  letter-spacing: 0.1em; margin-bottom: 16px; text-transform: uppercase;
-}
-.counter-wrap { text-align: center; margin-bottom: 6px; }
-.counter-label {
-  font-size: 0.66rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase;
-  color: var(--white); background: var(--red); padding: 3px 14px; border-radius: 20px;
-  display: inline-block; margin-bottom: 10px;
-}
-.count-number {
-  font-family: 'Outfit', sans-serif; font-weight: 800;
-  font-size: clamp(6rem, 20vw, 14rem);
-  line-height: 0.88; letter-spacing: -0.04em; display: block; transition: color 0.4s;
-}
-.count-number.flash { animation: flashAnim 1.5s ease forwards; }
-@keyframes flashAnim {
-  0%   { color: var(--red); filter: drop-shadow(0 0 30px rgba(232,0,45,0.8)); }
-  60%  { color: var(--red); filter: drop-shadow(0 0 10px rgba(232,0,45,0.3)); }
-  100% { filter: none; }
-}
-.counter-sub { font-family: 'Outfit', sans-serif; font-weight: 300; font-size: clamp(0.85rem, 2vw, 1.3rem); letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted2); margin-bottom: 3px; }
-.counter-tagline { font-size: 0.72rem; color: var(--muted); letter-spacing: 0.06em; margin-bottom: 20px; }
+.dash-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;flex-shrink:0}
+.dash-titles{}
+.dash-eyebrow{font-size:0.62rem;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--red);margin-bottom:3px;display:flex;align-items:center;gap:7px}
+.dash-eyebrow::before{content:'';width:18px;height:2px;background:var(--red);border-radius:2px}
+.dash-title{font-family:'Sora',sans-serif;font-weight:800;font-size:clamp(1.1rem,2.2vw,1.6rem);letter-spacing:-0.03em;color:var(--ink);line-height:1.1}
 
-.status-label-row { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
-.status-icon-big { font-size: 1.8rem; }
-.status-name-big { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: clamp(1rem, 2.2vw, 1.4rem); transition: color 0.4s; }
-.status-desc { font-size: 0.7rem; color: var(--muted); margin-top: 2px; }
+.summary-chips{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.chip{
+  display:flex;align-items:center;gap:6px;
+  background:var(--glass2);border:1px solid rgba(255,255,255,0.9);
+  padding:6px 14px;border-radius:20px;
+  box-shadow:0 1px 4px rgba(30,40,80,0.06);
+  white-space:nowrap;
+}
+.chip-label{font-size:0.62rem;font-weight:500;color:var(--muted);letter-spacing:0.07em;text-transform:uppercase}
+.chip-val{font-family:'Sora',sans-serif;font-weight:700;font-size:0.95rem;letter-spacing:-0.01em}
+.chip-val.green{color:var(--green)}
+.chip-val.red{color:var(--red)}
+.chip-val.ink{color:var(--ink)}
 
-.status-bar {
-  display: flex; border: 1px solid var(--border2); border-radius: 10px; overflow: hidden;
-  margin-bottom: 18px; min-width: clamp(280px, 58vw, 620px); background: var(--bg2);
+/* ── Main two-column layout ─────────────────────────── */
+.dash-body{
+  flex:1;
+  min-height:0;
+  display:grid;
+  grid-template-columns:1fr 320px;
+  gap:14px;
+  overflow:hidden;
 }
-.si { flex: 1; padding: 9px 6px; text-align: center; border-right: 1px solid var(--border); transition: background 0.2s; }
-.si:last-child { border-right: none; }
-.si.active { background: rgba(255,255,255,0.05); }
-.si-icon  { font-size: 1rem; margin-bottom: 2px; }
-.si-name  { font-size: 0.58rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
-.si-range { font-size: 0.55rem; color: var(--muted); opacity: 0.65; margin-top: 1px; }
+@media(max-width:960px){.dash-body{grid-template-columns:1fr;overflow-y:auto}}
 
-.stats-row {
-  display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; justify-content: center;
-  min-width: clamp(280px, 58vw, 620px);
+/* ── Map container ─────────────────────────────────── */
+.map-wrap{
+  background:var(--glass);
+  backdrop-filter:blur(16px) saturate(1.4);
+  -webkit-backdrop-filter:blur(16px) saturate(1.4);
+  border:1px solid rgba(255,255,255,0.88);
+  border-radius:var(--r);
+  box-shadow:var(--shadow);
+  padding:14px 18px 10px;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  min-height:200px;
+  position:relative;
 }
-.stat-box { flex: 1; min-width: 120px; background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 11px 15px; }
-.stat-lbl { font-size: 0.6rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
-.stat-val { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1rem; color: var(--white); }
-.stat-val.green { color: var(--green); }
+.map-wrap::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 70% 60% at 60% 40%,rgba(232,0,45,0.025),transparent 65%);
+  pointer-events:none;border-radius:inherit;
+}
+.map-label{font-family:'Sora',sans-serif;font-size:0.64rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;display:flex;align-items:center;gap:7px;flex-shrink:0}
+.map-label::after{content:'';flex:1;height:1px;background:var(--border)}
 
-.record-pill {
-  display: inline-flex; align-items: center; gap: 6px;
-  background: var(--green-dim); border: 1px solid rgba(34,197,94,0.3);
-  color: var(--green); padding: 5px 16px; border-radius: 20px;
-  font-size: 0.68rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
-  margin-bottom: 12px; opacity: 0; transition: opacity 0.3s;
+.france-svg{
+  flex:1;
+  width:100%;
+  height:100%;
+  min-height:0;
+  max-width:none;
+  display:block;
+  overflow:visible;
 }
-.record-pill.visible { opacity: 1; }
-.record-pill::before { content: '★ '; }
 
-.actions-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-bottom: 12px; }
-.btn-action {
-  font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 0.8rem; letter-spacing: 0.04em;
-  padding: 10px 22px; border-radius: 8px; cursor: pointer;
-  display: flex; align-items: center; gap: 7px; transition: all 0.2s;
-}
-.btn-edit  { background: rgba(255,255,255,0.07); border: 1px solid var(--border2); color: var(--white2); }
-.btn-edit:hover { background: rgba(255,255,255,0.12); color: var(--white); }
-.btn-reset { background: var(--red-dim); border: 1px solid rgba(232,0,45,0.3); color: var(--red); }
-.btn-reset:hover { background: var(--red); color: #fff; box-shadow: 0 0 20px var(--red-glow); }
-.date-footer { font-size: 0.67rem; color: var(--muted); letter-spacing: 0.04em; }
+/* SVG map styling */
+.fr-sea{fill:#DDE8F5}
+.fr-land{fill:#F0F4FC;stroke:rgba(30,50,120,0.28);stroke-width:2.2;stroke-linejoin:round;filter:drop-shadow(0 5px 18px rgba(20,40,100,0.13))}
+.fr-relief{stroke:rgba(30,50,120,0.04);stroke-width:1;fill:none}
+.fr-corse{fill:#E8EEF8;stroke:rgba(30,50,120,0.22);stroke-width:1.8}
 
-.ticker-wrap { overflow: hidden; flex-shrink: 0; background: rgba(0,0,0,0.3); border-top: 1px solid var(--border); display: flex; align-items: center; }
-.ticker-tag {
-  font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 0.68rem; letter-spacing: 0.12em;
-  text-transform: uppercase; padding: 9px 18px; white-space: nowrap; flex-shrink: 0; transition: background 0.4s, color 0.4s;
+/* Weather map markers */
+.site-marker{cursor:pointer;pointer-events:all}
+.site-marker *{cursor:pointer}
+.site-marker .mk-pulse{
+  fill:none;stroke-width:1.8;opacity:.38;
+  animation:mkPulse 2.6s ease-in-out infinite;
+  transform-origin:center;transform-box:fill-box;
 }
-.ticker-track-outer { overflow: hidden; flex: 1; }
-.ticker-track {
-  display: flex; white-space: nowrap; font-size: 0.73rem; font-weight: 400;
-  letter-spacing: 0.1em; text-transform: uppercase; padding: 9px 0; color: var(--muted2);
-  animation: tickScroll 26s linear infinite;
+@keyframes mkPulse{0%,100%{r:14;opacity:.38}50%{r:24;opacity:.06}}
+.site-marker.active .mk-pulse{animation:mkPulseActive 1.8s ease-in-out infinite;opacity:.55}
+@keyframes mkPulseActive{0%,100%{r:16;opacity:.55}50%{r:28;opacity:.1}}
+.site-marker .mk-dot{stroke:white;stroke-width:2.5;transition:r .2s}
+.site-marker:hover .mk-dot,.site-marker.active .mk-dot{r:7}
+.site-marker .mk-badge-bg{
+  filter:drop-shadow(0 3px 10px rgba(20,40,100,0.14));
+  transition:filter .25s;
 }
-.ticker-track span { padding-right: 80px; }
-@keyframes tickScroll { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+.site-marker:hover .mk-badge-bg,.site-marker.active .mk-badge-bg{
+  filter:drop-shadow(0 5px 18px rgba(20,40,100,0.22));
+}
+.site-marker .mk-stem{stroke-dasharray:3,2.5;opacity:.45;stroke-linecap:round;pointer-events:none}
+/* Text elements: pointer-events:all so clicks bubble up to marker <g> */
+.site-marker .mk-icon{pointer-events:all;dominant-baseline:middle}
+.site-marker .mk-count{pointer-events:all;font-family:'Sora',sans-serif;font-weight:700}
+.site-marker .mk-city{pointer-events:all;font-family:'DM Sans',sans-serif;font-weight:500;fill:#6B7595;font-size:9.5px}
 
-/* ═══ OVERLAYS ══════════════════════════════════════════════════ */
-.overlay { display: none; position: fixed; inset: 0; background: rgba(7,16,31,0.88); backdrop-filter: blur(8px); z-index: 500; align-items: center; justify-content: center; }
-.overlay.active { display: flex; }
-.dialog {
-  background: #0f1e33; border: 1px solid var(--border2); border-radius: 16px;
-  padding: 36px 40px; width: 90%; max-width: 440px; text-align: center;
-  box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+/* ── Detail panel ──────────────────────────────────── */
+.detail-panel{
+  background:var(--glass2);
+  backdrop-filter:blur(24px) saturate(1.5);
+  -webkit-backdrop-filter:blur(24px) saturate(1.5);
+  border:1px solid rgba(255,255,255,0.95);
+  border-radius:var(--r);
+  box-shadow:var(--shadow-lg);
+  display:flex;flex-direction:column;
+  overflow:hidden;
+  transition:all .35s cubic-bezier(.32,.84,.36,1);
 }
-.dialog-icon  { font-size: 2.2rem; margin-bottom: 10px; display: block; }
-.dialog-title { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.4rem; letter-spacing: -0.01em; margin-bottom: 8px; }
-.dialog-title.red    { color: var(--red); }
-.dialog-title.yellow { color: var(--yellow); }
-.dialog-sub  { font-size: 0.86rem; color: var(--muted2); line-height: 1.6; margin-bottom: 22px; }
-.field-lbl   { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; display: block; text-align: left; }
-.field-input {
-  width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border2); border-radius: 8px;
-  color: var(--white); font-family: 'DM Sans', sans-serif; font-size: 1rem;
-  padding: 10px 14px; margin-bottom: 14px; outline: none; transition: border-color 0.2s;
+.panel-welcome{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  height:100%;padding:40px 24px;text-align:center;gap:10px;
 }
-.field-input:focus { border-color: rgba(232,0,45,0.5); }
-.field-input-big {
-  width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border2); border-radius: 8px;
-  color: var(--white); font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 2.4rem;
-  text-align: center; padding: 10px 14px; margin-bottom: 8px; outline: none;
-  -moz-appearance: textfield; transition: border-color 0.2s;
-}
-.field-input-big::-webkit-outer-spin-button,
-.field-input-big::-webkit-inner-spin-button { -webkit-appearance: none; }
-.field-input-big:focus { border-color: rgba(232,0,45,0.5); }
-.field-hint { font-size: 0.7rem; color: var(--muted); text-align: left; margin-bottom: 20px; }
-.date-field {
-  width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border2); border-radius: 8px;
-  color: var(--white); font-family: 'DM Sans', sans-serif; font-size: 1rem;
-  padding: 10px 14px; margin-bottom: 20px; outline: none; color-scheme: dark; transition: border-color 0.2s;
-}
-.date-field:focus { border-color: rgba(232,0,45,0.5); }
-.dialog-btns { display: flex; gap: 10px; justify-content: center; }
-.btn-confirm {
-  background: var(--red); border: none; color: #fff; border-radius: 8px;
-  font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 0.88rem; letter-spacing: 0.04em;
-  padding: 11px 28px; cursor: pointer; transition: all 0.2s;
-}
-.btn-confirm:hover { background: #c8001f; box-shadow: 0 0 16px var(--red-glow); }
-.btn-apply {
-  background: var(--white); border: none; color: #07101f; border-radius: 8px;
-  font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 0.88rem; letter-spacing: 0.04em;
-  padding: 11px 28px; cursor: pointer; transition: all 0.2s;
-}
-.btn-apply:hover { background: #dde2ed; }
-.btn-cancel {
-  background: transparent; border: 1px solid var(--border2); color: var(--muted2); border-radius: 8px;
-  font-family: 'Outfit', sans-serif; font-weight: 500; font-size: 0.88rem;
-  padding: 11px 28px; cursor: pointer; transition: all 0.2s;
-}
-.btn-cancel:hover { border-color: var(--white2); color: var(--white); }
-.warning-box {
-  background: rgba(232,0,45,0.07); border: 1px solid rgba(232,0,45,0.2); border-radius: 8px;
-  padding: 10px 14px; font-size: 0.75rem; color: rgba(232,0,45,0.9); margin-bottom: 20px; line-height: 1.5; text-align: left;
-}
-/* ═══ INPUT MODE TOGGLE ══════════════════════════════════════════ */
-.input-mode-tabs {
-  display: flex; gap: 0; margin-bottom: 16px; border-radius: 8px; overflow: hidden;
-  border: 1px solid var(--border2); background: rgba(0,0,0,0.2);
-}
-.input-tab {
-  flex: 1; padding: 9px 12px; background: transparent; border: none;
-  font-family: 'Outfit', sans-serif; font-size: 0.78rem; font-weight: 600;
-  letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted2);
-  cursor: pointer; transition: all 0.2s; border-right: 1px solid var(--border2);
-}
-.input-tab:last-child { border-right: none; }
-.input-tab.active {
-  background: rgba(232,0,45,0.15); color: var(--white);
-  box-shadow: inset 0 -2px 0 var(--red);
-}
-.input-tab:hover:not(.active) { background: rgba(255,255,255,0.04); color: var(--white2); }
-.input-mode-panel { display: none; }
-.input-mode-panel.active { display: block; }
+.panel-welcome-icon{font-size:2.4rem;opacity:0.18;margin-bottom:4px}
+.panel-welcome-title{font-family:'Sora',sans-serif;font-weight:700;font-size:0.95rem;color:var(--ink2)}
+.panel-welcome-sub{font-size:0.75rem;color:var(--muted);line-height:1.5}
 
-.purge-btn {
-  position: fixed; bottom: 18px; right: 18px; z-index: 50;
-  background: transparent; border: 1px solid rgba(255,255,255,0.06); color: var(--muted); border-radius: 6px;
-  font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 5px 12px; cursor: pointer; transition: all 0.2s;
-}
-.purge-btn:hover { border-color: rgba(232,0,45,0.4); color: var(--red); }
+.panel-site{display:none;flex-direction:column;height:100%;animation:slideUp .32s cubic-bezier(.32,.84,.36,1)}
+@keyframes slideUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.panel-site.visible{display:flex}
 
-/* ═══ PIN ═══════════════════════════════════════════════════════ */
-.pin-dialog { max-width: 320px; }
-.pin-title { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.4rem; color: var(--white); margin-bottom: 4px; }
-.pin-sub   { font-size: 0.76rem; color: var(--muted2); margin-bottom: 20px; }
-.pin-dots  { display: flex; justify-content: center; gap: 10px; margin-bottom: 16px; }
-.pin-dot   { width: 13px; height: 13px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.18); background: transparent; transition: all 0.15s; }
-.pin-dot.filled { background: var(--red); border-color: var(--red); }
-.pin-grid  { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 12px; }
-.pin-key   {
-  background: rgba(255,255,255,0.05); border: 1px solid var(--border2); border-radius: 8px;
-  color: var(--white); font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 1.3rem;
-  padding: 14px 0; cursor: pointer; transition: all 0.15s;
+.panel-top{padding:20px 22px 16px;border-bottom:1px solid var(--border)}
+.panel-site-row{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:10px}
+.panel-badge{
+  font-size:0.6rem;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;
+  padding:4px 10px;border-radius:20px;white-space:nowrap;flex-shrink:0;margin-top:2px;
 }
-.pin-key:hover  { background: rgba(255,255,255,0.1); }
-.pin-key:active { background: rgba(232,0,45,0.2); border-color: rgba(232,0,45,0.4); }
-.pin-key.del { font-size: 0.8rem; font-weight: 500; color: var(--muted2); }
-.pin-err  { font-size: 0.7rem; color: var(--red); letter-spacing: 0.1em; height: 16px; margin-bottom: 8px; }
-.pin-change {
-  background: transparent; border: 1px solid rgba(255,255,255,0.08); color: var(--muted); border-radius: 6px;
-  font-size: 0.67rem; letter-spacing: 0.1em; text-transform: uppercase;
-  padding: 7px 14px; cursor: pointer; width: 100%; transition: all 0.2s;
-}
-.pin-change:hover { border-color: rgba(232,0,45,0.3); color: var(--red); }
+.panel-name{font-family:'Sora',sans-serif;font-weight:800;font-size:1.05rem;color:var(--ink);letter-spacing:-0.02em}
+.panel-loc{font-size:0.7rem;color:var(--muted);margin-top:2px;display:flex;align-items:center;gap:3px}
 
-@media (max-width: 700px) {
-  .topbar { padding: 0 16px; }
-  .topbar-center { display: none; }
-  #screen-dashboard { padding: 20px 16px; }
-  .summary-strip { flex-direction: column; gap: 0; border-radius: 10px; }
-  .sum-box { border-bottom: 1px solid var(--border); }
-  .site-card { width: 100%; max-width: 400px; }
-  .detail-main { padding: 16px 20px; }
-  .status-bar, .stats-row { min-width: unset; width: 100%; }
-  .site-nav { padding: 0 16px; }
+.panel-counter-wrap{text-align:center;padding:10px 22px;border-bottom:1px solid var(--border)}
+.panel-days-lbl{font-size:0.58rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+.panel-days-num{
+  font-family:'Sora',sans-serif;font-weight:800;
+  font-size:clamp(2.8rem,8vw,4.2rem);letter-spacing:-0.04em;line-height:1;
+  display:block;transition:color .4s;
+}
+.panel-days-sub{font-size:0.68rem;font-weight:400;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-top:2px}
+
+.panel-stats{padding:14px 22px;display:flex;flex-direction:column;gap:8px;flex:1}
+.panel-stat-row{display:flex;justify-content:space-between;align-items:center}
+.panel-stat-lbl{font-size:0.65rem;font-weight:500;color:var(--muted);letter-spacing:0.05em;text-transform:uppercase}
+.panel-stat-val{font-family:'Sora',sans-serif;font-weight:600;font-size:0.82rem;color:var(--ink2)}
+.panel-stat-val.green{color:var(--green)}
+
+.panel-record{
+  display:none;align-items:center;gap:6px;
+  background:var(--green-dim);border:1px solid rgba(24,160,91,0.2);
+  color:var(--green);padding:5px 14px;border-radius:10px;
+  font-size:0.65rem;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;
+  margin:0 22px;
+}
+.panel-record.visible{display:flex}
+.panel-record::before{content:'★'}
+
+.panel-footer{padding:14px 22px;border-top:1px solid var(--border)}
+.btn-view{
+  width:100%;
+  font-family:'Sora',sans-serif;font-weight:600;font-size:0.82rem;letter-spacing:0.02em;
+  padding:11px;border-radius:10px;
+  background:var(--red);border:none;color:#fff;
+  cursor:pointer;transition:all .22s;
+  display:flex;align-items:center;justify-content:center;gap:7px;
+}
+.btn-view:hover{background:#c8001f;box-shadow:0 4px 18px var(--red-glow);transform:translateY(-1px)}
+.btn-view::after{content:'→';transition:transform .2s}
+.btn-view:hover::after{transform:translateX(4px)}
+
+/* ── Carousel ──────────────────────────────────────── */
+.carousel-section{flex-shrink:0;padding:10px 0 12px}
+.carousel-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:8px;padding:0 2px;
+}
+.carousel-title{font-family:'Sora',sans-serif;font-weight:700;font-size:0.78rem;color:var(--ink2);letter-spacing:-0.01em;display:flex;align-items:center;gap:6px}
+.carousel-nav{display:none}/* hidden — 4 cards always visible */
+.btn-nav{
+  width:30px;height:30px;border-radius:8px;
+  background:var(--glass2);border:1px solid rgba(255,255,255,0.9);
+  color:var(--ink2);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.85rem;transition:all .18s;
+  box-shadow:0 1px 4px rgba(30,40,80,0.06);
+}
+.btn-nav:hover{background:#fff;box-shadow:0 3px 10px rgba(30,40,80,0.12);transform:translateY(-1px)}
+.btn-nav:disabled{opacity:.3;cursor:not-allowed;transform:none}
+
+.carousel-track-outer{overflow:hidden;position:relative}
+.carousel-track{
+  display:flex;gap:12px;
+  overflow-x:auto;scroll-snap-type:x mandatory;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;padding-bottom:2px;
+  scroll-behavior:smooth;
+}
+.carousel-track::-webkit-scrollbar{display:none}
+
+.c-card{
+  flex-shrink:0;
+  width:calc(25% - 10px);min-width:180px;
+  background:var(--glass);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border:1.5px solid rgba(255,255,255,0.85);
+  border-radius:14px;
+  box-shadow:var(--shadow);
+  padding:12px 14px;cursor:pointer;
+  scroll-snap-align:start;
+  transition:all .25s cubic-bezier(.32,.84,.36,1);
+  position:relative;overflow:hidden;
+}
+.c-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  border-radius:14px 14px 0 0;transition:opacity .2s;
+}
+.c-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:rgba(255,255,255,1)}
+.c-card.active{
+  border-color:rgba(232,0,45,0.3);
+  box-shadow:0 8px 32px rgba(232,0,45,0.12),0 2px 8px rgba(30,40,80,0.08);
+  transform:translateY(-4px);
+}
+.c-card.active::after{
+  content:'';position:absolute;inset:0;border-radius:14px;
+  background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(232,0,45,0.04),transparent 60%);
+  pointer-events:none;
+}
+.cc-name{font-family:'Sora',sans-serif;font-weight:700;font-size:0.82rem;color:var(--ink);margin-bottom:2px;letter-spacing:-0.01em}
+.cc-loc{font-size:0.62rem;color:var(--muted);margin-bottom:10px}
+.cc-count{font-family:'Sora',sans-serif;font-weight:800;font-size:1.9rem;letter-spacing:-0.03em;line-height:1}
+.cc-unit{font-size:0.62rem;font-weight:500;color:var(--muted);letter-spacing:0.07em;text-transform:uppercase;margin-top:2px;margin-bottom:8px}
+.cc-badge{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:0.6rem;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;
+  padding:3px 9px;border-radius:20px;
+}
+.cc-del{
+  position:absolute;top:10px;right:10px;
+  background:transparent;border:none;color:var(--muted2);
+  font-size:0.8rem;cursor:pointer;padding:4px;border-radius:6px;
+  transition:all .18s;line-height:1;
+}
+.cc-del:hover{color:var(--red);background:var(--red-dim)}
+
+.empty-state{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:80px 20px;gap:10px;text-align:center;width:100%;
+}
+.empty-icon{font-size:2.4rem;opacity:0.15}
+.empty-title{font-family:'Sora',sans-serif;font-weight:700;font-size:1rem;color:var(--muted)}
+.empty-sub{font-size:0.75rem;color:var(--muted2)}
+
+/* ═══════════ SITE DETAIL SCREEN ═══════════════════════ */
+#screen-site{overflow:hidden}
+.site-nav{
+  display:flex;align-items:center;gap:12px;
+  padding:0 32px;height:48px;flex-shrink:0;
+  background:rgba(240,243,250,0.65);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+}
+.btn-back{
+  display:flex;align-items:center;gap:5px;
+  font-size:0.75rem;font-weight:500;color:var(--muted);
+  background:transparent;border:none;cursor:pointer;transition:color .2s;
+}
+.btn-back:hover{color:var(--red)}
+.btn-back svg{width:14px;height:14px}
+.nav-sep{width:1px;height:16px;background:var(--border2)}
+.nav-site-name{font-family:'Sora',sans-serif;font-weight:600;font-size:0.85rem;color:var(--ink)}
+.nav-site-loc{font-size:0.68rem;color:var(--muted);margin-left:4px}
+
+.detail-main{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:10px 90px;position:relative;overflow:hidden;
+}
+.detail-main::before{
+  content:'';position:absolute;
+  width:500px;height:500px;border-radius:50%;
+  border:1px solid rgba(0,0,0,0.025);
+  top:50%;left:50%;transform:translate(-50%,-50%);
+  pointer-events:none;
+}
+.detail-main::after{
+  content:'';position:absolute;
+  width:280px;height:280px;border-radius:50%;
+  border:1px solid rgba(0,0,0,0.035);
+  top:50%;left:50%;transform:translate(-50%,-50%);
+  pointer-events:none;
+}
+
+.detail-eyebrow{
+  font-size:0.63rem;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:1px;display:flex;align-items:center;gap:6px;
+}
+.detail-site-label{
+  font-family:'Sora',sans-serif;font-weight:300;
+  font-size:clamp(0.75rem,1.3vw,0.9rem);color:var(--ink2);
+  letter-spacing:0.08em;margin-bottom:8px;text-transform:uppercase;
+}
+.counter-wrap{text-align:center;margin-bottom:2px}
+.counter-label{
+  font-size:0.62rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;
+  color:#fff;background:var(--red);padding:3px 14px;border-radius:20px;
+  display:inline-block;margin-bottom:5px;
+}
+.count-number{
+  font-family:'Sora',sans-serif;font-weight:800;
+  font-size:clamp(4.5rem,14vw,9rem);
+  line-height:0.88;letter-spacing:-0.05em;display:block;transition:color .4s;
+  color:var(--ink);
+}
+.count-number.flash{animation:flashAnim 1.5s ease forwards}
+@keyframes flashAnim{
+  0%{color:var(--red);filter:drop-shadow(0 0 20px rgba(232,0,45,0.5))}
+  60%{color:var(--red)}
+  100%{color:var(--ink);filter:none}
+}
+.counter-sub{font-family:'Sora',sans-serif;font-weight:300;font-size:clamp(0.68rem,1.5vw,0.95rem);letter-spacing:0.22em;text-transform:uppercase;color:var(--muted);margin-bottom:1px}
+.counter-tagline{font-size:0.66rem;color:var(--muted2);letter-spacing:0.05em;margin-bottom:10px}
+
+.status-label-row{display:flex;align-items:center;gap:9px;margin-bottom:8px}
+.status-icon-big{font-size:1.4rem}
+.status-name-big{font-family:'Sora',sans-serif;font-weight:700;font-size:clamp(0.9rem,1.8vw,1.15rem);transition:color .4s}
+.status-desc{font-size:0.64rem;color:var(--muted);margin-top:1px}
+
+.status-bar{
+  display:flex;
+  background:var(--glass2);
+  border:1px solid rgba(255,255,255,0.9);
+  border-radius:12px;overflow:hidden;
+  box-shadow:var(--shadow);
+  margin-bottom:10px;min-width:clamp(260px,55vw,560px);
+}
+.si{flex:1;padding:7px 5px;text-align:center;border-right:1px solid var(--border);transition:background .2s}
+.si:last-child{border-right:none}
+.si.active{background:rgba(232,0,45,0.06)}
+.si-icon{font-size:0.88rem;margin-bottom:1px}
+.si-name{font-size:0.52rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted)}
+.si-range{font-size:0.5rem;color:var(--muted2);opacity:.7;margin-top:1px}
+
+.stats-row{
+  display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;justify-content:center;
+  min-width:clamp(260px,55vw,560px);
+}
+.stat-box{
+  flex:1;min-width:110px;
+  background:var(--glass2);border:1px solid rgba(255,255,255,0.9);
+  border-radius:10px;padding:8px 14px;
+  box-shadow:var(--shadow);
+}
+.stat-lbl{font-size:0.56rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+.stat-val{font-family:'Sora',sans-serif;font-weight:700;font-size:0.9rem;color:var(--ink)}
+.stat-val.green{color:var(--green)}
+
+.record-pill{
+  display:none;align-items:center;gap:5px;
+  background:var(--green-dim);border:1px solid rgba(24,160,91,0.25);
+  color:var(--green);padding:4px 15px;border-radius:20px;
+  font-size:0.62rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;
+  margin-bottom:7px;transition:opacity .3s;
+}
+.record-pill.visible{display:inline-flex}
+.record-pill::before{content:'★'}
+
+.actions-row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:6px}
+.btn-action{
+  font-family:'Sora',sans-serif;font-weight:600;font-size:0.75rem;letter-spacing:0.03em;
+  padding:9px 20px;border-radius:9px;cursor:pointer;
+  display:flex;align-items:center;gap:6px;transition:all .2s;
+}
+.btn-edit{background:rgba(0,0,0,0.04);border:1px solid var(--border2);color:var(--ink2)}
+.btn-edit:hover{background:rgba(0,0,0,0.07);color:var(--ink)}
+.btn-reset{background:var(--red-dim);border:1px solid rgba(232,0,45,0.2);color:var(--red)}
+.btn-reset:hover{background:var(--red);color:#fff;box-shadow:0 4px 16px var(--red-glow)}
+.date-footer{font-size:0.63rem;color:var(--muted2);letter-spacing:0.03em}
+
+.site-nav-arrows{margin-left:auto;display:flex;align-items:center;gap:7px}
+.nav-site-idx{
+  font-family:'Sora',sans-serif;font-size:0.72rem;font-weight:700;
+  color:var(--muted);min-width:32px;text-align:center;letter-spacing:0.05em;
+  background:rgba(0,0,0,0.04);border-radius:6px;padding:3px 8px;
+}
+
+/* ── Large side navigation arrows (site detail screen) ── */
+.btn-side-nav{
+  position:fixed;top:50%;transform:translateY(-52%);
+  z-index:60;
+  width:80px;height:220px;
+  border:none;background:transparent;
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  color:rgba(30,40,80,0.14);
+  border-radius:20px;
+  transition:color .3s ease, background .3s ease, box-shadow .3s ease, transform .3s cubic-bezier(.32,.84,.36,1);
+  padding:0;
+}
+.btn-side-nav.nav-left{left:8px}
+.btn-side-nav.nav-right{right:8px}
+.btn-side-nav:hover{
+  color:var(--red);
+  background:rgba(255,255,255,0.65);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  box-shadow:0 8px 40px rgba(30,40,80,0.09),0 1px 4px rgba(30,40,80,0.04),inset 0 1px 0 rgba(255,255,255,0.85);
+  transform:translateY(-52%) scale(1.05);
+}
+.btn-side-nav svg{
+  width:38px;height:88px;
+  transition:transform .3s cubic-bezier(.32,.84,.36,1);
+}
+.btn-side-nav.nav-left:hover svg{transform:translateX(-6px)}
+.btn-side-nav.nav-right:hover svg{transform:translateX(6px)}
+
+@media(max-width:700px){
+  .btn-side-nav{width:44px;height:130px;border-radius:12px}
+  .btn-side-nav.nav-left{left:2px}
+  .btn-side-nav.nav-right{right:2px}
+  .btn-side-nav svg{width:22px;height:52px}
+}
+
+/* Ticker */
+
+/* Detail screen slide animations */
+.detail-main{position:relative}
+.detail-anim{display:contents}
+.count-number.slide-exit-left{animation:cExitLeft .22s ease forwards}
+.count-number.slide-exit-right{animation:cExitRight .22s ease forwards}
+.count-number.slide-enter-right{animation:cEnterRight .26s cubic-bezier(.32,.84,.36,1) forwards}
+.count-number.slide-enter-left{animation:cEnterLeft .26s cubic-bezier(.32,.84,.36,1) forwards}
+@keyframes cExitLeft{to{opacity:0;transform:translateX(-50px)}}
+@keyframes cExitRight{to{opacity:0;transform:translateX(50px)}}
+@keyframes cEnterRight{from{opacity:0;transform:translateX(50px)}to{opacity:1;transform:none}}
+@keyframes cEnterLeft{from{opacity:0;transform:translateX(-50px)}to{opacity:1;transform:none}}
+
+/* Stats row fade on switch */
+.stats-row.fade-out{animation:rowFade .2s ease forwards}
+.stats-row.fade-in{animation:rowFadeIn .28s ease forwards}
+@keyframes rowFade{to{opacity:0;transform:translateY(8px)}}
+@keyframes rowFadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.ticker-wrap{overflow:hidden;flex-shrink:0;background:rgba(255,255,255,0.5);border-top:1px solid var(--border);display:flex;align-items:center;backdrop-filter:blur(10px)}
+.ticker-tag{font-family:'Sora',sans-serif;font-weight:700;font-size:0.64rem;letter-spacing:0.12em;text-transform:uppercase;padding:8px 16px;white-space:nowrap;flex-shrink:0;transition:background .4s,color .4s}
+.ticker-track-outer{overflow:hidden;flex:1}
+.ticker-track{display:flex;white-space:nowrap;font-size:0.68rem;font-weight:400;letter-spacing:0.1em;text-transform:uppercase;padding:8px 0;color:var(--muted);animation:tickScroll 26s linear infinite}
+.ticker-track span{padding-right:80px}
+@keyframes tickScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* ═══════════ OVERLAYS ══════════════════════════════════ */
+.overlay{
+  display:none;position:fixed;inset:0;
+  background:rgba(200,210,230,0.5);
+  backdrop-filter:blur(12px) saturate(1.2);
+  -webkit-backdrop-filter:blur(12px) saturate(1.2);
+  z-index:500;align-items:center;justify-content:center;
+}
+.overlay.active{display:flex}
+.dialog{
+  background:rgba(255,255,255,0.94);
+  border:1px solid rgba(255,255,255,1);
+  border-radius:20px;padding:32px 36px;width:90%;max-width:420px;text-align:center;
+  box-shadow:0 24px 80px rgba(30,40,80,0.18),0 4px 16px rgba(30,40,80,0.06);
+}
+.dialog-icon{font-size:2rem;margin-bottom:8px;display:block}
+.dialog-title{font-family:'Sora',sans-serif;font-weight:800;font-size:1.3rem;letter-spacing:-0.02em;margin-bottom:6px}
+.dialog-title.red{color:var(--red)}
+.dialog-title.yellow{color:var(--orange)}
+.dialog-sub{font-size:0.82rem;color:var(--muted);line-height:1.6;margin-bottom:20px}
+.field-lbl{font-size:0.62rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;display:block;text-align:left}
+.field-input{
+  width:100%;background:rgba(0,0,0,0.03);border:1.5px solid var(--border2);border-radius:9px;
+  color:var(--ink);font-family:'DM Sans',sans-serif;font-size:0.95rem;
+  padding:10px 13px;margin-bottom:12px;outline:none;transition:border-color .2s;
+}
+.field-input:focus{border-color:rgba(232,0,45,0.4)}
+.field-input-big{
+  width:100%;background:rgba(0,0,0,0.03);border:1.5px solid var(--border2);border-radius:9px;
+  color:var(--ink);font-family:'Sora',sans-serif;font-weight:700;font-size:2.2rem;
+  text-align:center;padding:10px 13px;margin-bottom:7px;outline:none;
+  -moz-appearance:textfield;transition:border-color .2s;
+}
+.field-input-big::-webkit-outer-spin-button,.field-input-big::-webkit-inner-spin-button{-webkit-appearance:none}
+.field-input-big:focus{border-color:rgba(232,0,45,0.4)}
+.field-hint{font-size:0.67rem;color:var(--muted);text-align:left;margin-bottom:18px}
+.date-field{
+  width:100%;background:rgba(0,0,0,0.03);border:1.5px solid var(--border2);border-radius:9px;
+  color:var(--ink);font-family:'DM Sans',sans-serif;font-size:0.95rem;
+  padding:10px 13px;margin-bottom:18px;outline:none;transition:border-color .2s;
+}
+.date-field:focus{border-color:rgba(232,0,45,0.4)}
+.dialog-btns{display:flex;gap:9px;justify-content:center}
+.btn-confirm{
+  background:var(--red);border:none;color:#fff;border-radius:9px;
+  font-family:'Sora',sans-serif;font-weight:600;font-size:0.84rem;letter-spacing:0.02em;
+  padding:10px 26px;cursor:pointer;transition:all .2s;
+}
+.btn-confirm:hover{background:#c8001f;box-shadow:0 4px 14px var(--red-glow)}
+.btn-apply{
+  background:var(--ink);border:none;color:#fff;border-radius:9px;
+  font-family:'Sora',sans-serif;font-weight:700;font-size:0.84rem;letter-spacing:0.02em;
+  padding:10px 26px;cursor:pointer;transition:all .2s;
+}
+.btn-apply:hover{background:#222}
+.btn-cancel{
+  background:transparent;border:1.5px solid var(--border2);color:var(--muted);border-radius:9px;
+  font-family:'Sora',sans-serif;font-weight:500;font-size:0.84rem;
+  padding:10px 26px;cursor:pointer;transition:all .2s;
+}
+.btn-cancel:hover{border-color:var(--ink2);color:var(--ink)}
+.warning-box{
+  background:rgba(232,0,45,0.05);border:1px solid rgba(232,0,45,0.15);border-radius:8px;
+  padding:9px 13px;font-size:0.72rem;color:var(--red);margin-bottom:18px;line-height:1.5;text-align:left;
+}
+.purge-btn{
+  position:fixed;bottom:16px;right:16px;z-index:50;
+  background:rgba(255,255,255,0.6);backdrop-filter:blur(10px);
+  border:1px solid var(--border2);color:var(--muted2);border-radius:6px;
+  font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;
+  padding:4px 11px;cursor:pointer;transition:all .2s;
+}
+.purge-btn:hover{border-color:rgba(232,0,45,0.35);color:var(--red)}
+
+/* ═══════════ PIN ════════════════════════════════════ */
+.pin-dialog{max-width:300px}
+.pin-title{font-family:'Sora',sans-serif;font-weight:800;font-size:1.3rem;color:var(--ink);margin-bottom:3px}
+.pin-sub{font-size:0.73rem;color:var(--muted);margin-bottom:18px}
+.pin-dots{display:flex;justify-content:center;gap:10px;margin-bottom:14px}
+.pin-dot{width:12px;height:12px;border-radius:50%;border:1.5px solid var(--border2);background:transparent;transition:all .15s}
+.pin-dot.filled{background:var(--red);border-color:var(--red)}
+.pin-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:10px}
+.pin-key{
+  background:rgba(0,0,0,0.03);border:1px solid var(--border);border-radius:9px;
+  color:var(--ink);font-family:'Sora',sans-serif;font-weight:600;font-size:1.2rem;
+  padding:13px 0;cursor:pointer;transition:all .15s;
+}
+.pin-key:hover{background:rgba(0,0,0,0.06)}
+.pin-key:active{background:rgba(232,0,45,0.1);border-color:rgba(232,0,45,0.3)}
+.pin-key.del{font-size:0.75rem;font-weight:500;color:var(--muted)}
+.pin-err{font-size:0.67rem;color:var(--red);letter-spacing:0.09em;height:15px;margin-bottom:7px}
+.pin-change{
+  background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:7px;
+  font-size:0.63rem;letter-spacing:0.1em;text-transform:uppercase;
+  padding:7px 13px;cursor:pointer;width:100%;transition:all .2s;
+}
+.pin-change:hover{border-color:rgba(232,0,45,0.25);color:var(--red)}
+
+/* ── Input mode dual tabs ──────────────────────────── */
+.input-mode-tabs{display:flex;border:1.5px solid var(--border2);border-radius:9px;overflow:hidden;margin-bottom:13px}
+.input-tab{flex:1;padding:8px 10px;background:transparent;border:none;font-family:'DM Sans',sans-serif;font-size:0.69rem;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);cursor:pointer;transition:all .18s;border-right:1.5px solid var(--border2)}
+.input-tab:last-child{border-right:none}
+.input-tab.active{background:rgba(232,0,45,0.07);color:var(--red)}
+.input-tab:hover:not(.active){background:rgba(0,0,0,0.03);color:var(--ink2)}
+.input-mode-panel{display:none}
+.input-mode-panel.active{display:block}
+
+@media(max-width:700px){
+  .topbar{padding:0 16px}
+  .topbar-pill{display:none}
+  #screen-dashboard{padding:16px 14px 0}
+  .dash-body{grid-template-columns:1fr}
+  .detail-panel{min-height:300px}
+  .site-card{width:100%;max-width:400px}
+  .detail-main{padding:16px 18px}
+  .status-bar,.stats-row{min-width:unset;width:100%}
+  .site-nav{padding:0 14px}
+  .carousel-track{padding:2px 2px 4px}
+  .c-card{min-width:200px;width:210px}
 }
 </style>
 </head>
 <body>
 <div class="app">
 
-  <header class="topbar">
-    <div class="topbar-logo" onclick="goToDashboard()">
-      <div class="logo-mark">RC</div>
-      <div class="logo-text">
-        <div class="logo-main">RCAD Sécurité</div>
-        <div class="logo-sub">TGV Inoui · Centres d'appel</div>
-      </div>
+<header class="topbar">
+  <div class="topbar-logo" onclick="goToDashboard()">
+    <div class="logo-mark">RC</div>
+    <div class="logo-text">
+      <div class="logo-main">RCAD Sécurité</div>
+      <div class="logo-sub">TGV CARE UO Sud-Est</div>
     </div>
-    <div class="topbar-center">
-      <span class="live-dot"></span>
-      <span class="live-text">Temps réel</span>
-    </div>
-    <div class="topbar-right">
-      <div class="topbar-clock" id="topbar-clock"></div>
-      <button class="btn-add" onclick="askWithPin('add-site')">+ Ajouter un site</button>
-    </div>
-  </header>
+  </div>
+  <div class="topbar-pill">
+    <span class="live-dot"></span>
+    <span class="live-text">Temps réel</span>
+  </div>
+  <div class="topbar-right">
+    <div class="topbar-clock" id="topbar-clock"></div>
+      <button class="btn-settings" onclick="askWithPin('settings')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+        Réglages
+      </button>
+  </div>
+</header>
 
-  <!-- DASHBOARD -->
-  <div class="screen active" id="screen-dashboard">
-    <div class="dash-eyebrow">Tableau de bord sécurité</div>
-    <div class="dash-title">Jours sans accident du travail</div>
-    <div class="summary-strip">
-      <div class="sum-box"><div class="sum-label">Sites actifs</div><div class="sum-val white" id="sum-sites">—</div></div>
-      <div class="sum-box"><div class="sum-label">Total jours cumulés</div><div class="sum-val green" id="sum-days">—</div></div>
-      <div class="sum-box"><div class="sum-label">Sites en alerte</div><div class="sum-val red" id="sum-alert">—</div></div>
-      <div class="sum-box"><div class="sum-label">Meilleur score</div><div class="sum-val white" id="sum-best">—</div></div>
+<!-- ════════════════ DASHBOARD ════════════════════════ -->
+<div class="screen active" id="screen-dashboard">
+
+  <div class="dash-header">
+    <div class="dash-titles">
+      <div class="dash-eyebrow">Tableau de bord sécurité</div>
+      <div class="dash-title">Jours sans accident du travail</div>
     </div>
-    <div class="sites-grid" id="sites-grid"></div>
+    <div class="summary-chips">
+      <div class="chip"><span class="chip-label">Sites</span><span class="chip-val ink" id="sum-sites">—</span></div>
+      <div class="chip"><span class="chip-label">Total jours</span><span class="chip-val green" id="sum-days">—</span></div>
+      <div class="chip"><span class="chip-label">En alerte</span><span class="chip-val red" id="sum-alert">—</span></div>
+      <div class="chip"><span class="chip-label">Moyenne</span><span class="chip-val ink" id="sum-avg">—</span></div>
+    </div>
   </div>
 
-  <!-- SITE DETAIL -->
-  <div class="screen" id="screen-site">
-    <div class="site-nav">
-      <button class="btn-back" onclick="goToDashboard()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
-        Retour
-      </button>
-      <div class="nav-sep"></div>
-      <div>
-        <span class="nav-site-name" id="nav-site-name">—</span>
-        <span class="nav-site-loc"  id="nav-site-loc"></span>
-      </div>
+  <!-- Map + Panel -->
+  <div class="dash-body">
+    <!-- France Map -->
+    <div class="map-wrap">
+      <div class="map-label">Carte des centres France</div>
+      <svg class="france-svg" viewBox="0 0 550 530" xmlns="http://www.w3.org/2000/svg" id="france-map">
+        <defs>
+          <filter id="bshadow" x="-30%" y="-30%" width="160%" height="160%">
+            <feDropShadow dx="0" dy="3" stdDeviation="6" flood-color="rgba(20,40,100,0.15)"/>
+          </filter>
+          <filter id="mglow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="4" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+
+        <!-- Sea -->
+        <rect class="fr-sea" x="0" y="0" width="550" height="530" rx="14"/>
+
+        <!-- ── France mainland ─────────────────────────────────────────
+             46 boundary vertices derived from real lat/lon:
+             x = 22 + (lon+5.1)/14.7 × 505
+             y = 22 + (51.1−lat)/9.8  × 505
+             (vertical scale compressed ×505/548 to fit viewBox height)
+             Clockwise: Dunkerque → NE border → Alps → Med coast
+             → Pyrenees → Atlantic → Brittany → Cotentin → Normandy → Dunkerque
+        ─────────────────────────────────────────────────────────────── -->
+        <path class="fr-land"
+          d="M 279,24
+             L 311,48  L 332,64  L 352,89
+             L 396,105 L 416,110 L 435,126
+             L 464,153 L 458,206
+             L 409,264 L 434,299 L 435,353
+             L 452,406
+             L 430,423 L 401,440 L 382,431
+             L 325,426 L 317,433 L 302,448 L 296,464
+             L 308,479
+             L 249,475 L 200,437 L 185,434 L 144,428
+             L 161,311 L 158,282
+             L 120,238 L 122,224 L 91,212
+             L 47,196  L 35,183
+             L 43,164  L 60,146  L 93,144  L 128,151
+             L 142,141 L 137,121 L 133,103
+             L 130,92
+             L 141,96  L 154,95  L 155,116 L 160,118
+             L 178,122 L 189,113 L 190,107
+             L 214,85  L 222,78  L 242,43  L 253,32
+             Z"/>
+
+        <!-- Corsica -->
+        <ellipse class="fr-corse" cx="500" cy="418" rx="13" ry="20" opacity="0.85"/>
+        <text x="500" y="423" text-anchor="middle" font-size="7" fill="rgba(30,50,120,0.4)" font-family="DM Sans">Corse</text>
+
+        <!-- ── Weather-map markers ─────────────────────────────────────
+             City positions (same formula, viewBox scale):
+             Béziers  43.34°N 3.22°E  → (308, 431)  badge upper-LEFT
+             Marseille 43.30°N 5.37°E → (382, 432)  badge upper-RIGHT
+             Valence   44.93°N 4.89°E → (365, 347)  badge upper-LEFT
+             Chambéry  45.57°N 5.92°E → (400, 313)  badge upper-RIGHT
+        ─────────────────────────────────────────────────────────────── -->
+
+        <!-- BÉZIERS -->
+        <g class="site-marker" id="mk-Béziers" data-city="Béziers" transform="translate(308,431)" onclick="handleMapClick(this)">
+          <rect x="-65" y="-95" width="70" height="120" fill="transparent" rx="4"/>
+          <circle class="mk-pulse" r="13" stroke="#A0A8BC"/>
+          <circle class="mk-dot"   r="5"  fill="#A0A8BC"/>
+          <line  class="mk-stem"  x1="-3" y1="-5" x2="-26" y2="-40" stroke="#A0A8BC" stroke-width="1.3"/>
+          <g transform="translate(-30,-64)" id="mbadge-Béziers">
+            <rect class="mk-badge-bg" x="-30" y="-26" width="60" height="52" rx="12"
+                  fill="white" fill-opacity="0.94" stroke="#A0A8BC" stroke-width="1.8"/>
+            <text class="mk-icon" id="micon-Béziers"   x="0" y="-7"  text-anchor="middle" font-size="21">⛅</text>
+            <text class="mk-count" id="mcount-Béziers" x="0" y="18"  text-anchor="middle" font-size="12" fill="#A0A8BC">—</text>
+          </g>
+          <text class="mk-city" x="0" y="20" text-anchor="middle">Béziers</text>
+        </g>
+
+        <!-- MARSEILLE -->
+        <g class="site-marker" id="mk-Marseille" data-city="Marseille" transform="translate(382,432)" onclick="handleMapClick(this)">
+          <rect x="-5" y="-95" width="70" height="120" fill="transparent" rx="4"/>
+          <circle class="mk-pulse" r="13" stroke="#A0A8BC"/>
+          <circle class="mk-dot"   r="5"  fill="#A0A8BC"/>
+          <line  class="mk-stem"  x1="3" y1="-5" x2="26" y2="-40" stroke="#A0A8BC" stroke-width="1.3"/>
+          <g transform="translate(30,-64)" id="mbadge-Marseille">
+            <rect class="mk-badge-bg" x="-30" y="-26" width="60" height="52" rx="12"
+                  fill="white" fill-opacity="0.94" stroke="#A0A8BC" stroke-width="1.8"/>
+            <text class="mk-icon" id="micon-Marseille"   x="0" y="-7"  text-anchor="middle" font-size="21">⛅</text>
+            <text class="mk-count" id="mcount-Marseille" x="0" y="18"  text-anchor="middle" font-size="12" fill="#A0A8BC">—</text>
+          </g>
+          <text class="mk-city" x="0" y="20" text-anchor="middle">Marseille</text>
+        </g>
+
+        <!-- VALENCE -->
+        <g class="site-marker" id="mk-Valence" data-city="Valence" transform="translate(365,347)" onclick="handleMapClick(this)">
+          <rect x="-65" y="-95" width="70" height="120" fill="transparent" rx="4"/>
+          <circle class="mk-pulse" r="13" stroke="#A0A8BC"/>
+          <circle class="mk-dot"   r="5"  fill="#A0A8BC"/>
+          <line  class="mk-stem"  x1="-3" y1="-5" x2="-26" y2="-40" stroke="#A0A8BC" stroke-width="1.3"/>
+          <g transform="translate(-30,-64)" id="mbadge-Valence">
+            <rect class="mk-badge-bg" x="-30" y="-26" width="60" height="52" rx="12"
+                  fill="white" fill-opacity="0.94" stroke="#A0A8BC" stroke-width="1.8"/>
+            <text class="mk-icon" id="micon-Valence"   x="0" y="-7"  text-anchor="middle" font-size="21">⛅</text>
+            <text class="mk-count" id="mcount-Valence" x="0" y="18"  text-anchor="middle" font-size="12" fill="#A0A8BC">—</text>
+          </g>
+          <text class="mk-city" x="0" y="20" text-anchor="middle">Valence</text>
+        </g>
+
+        <!-- CHAMBÉRY -->
+        <g class="site-marker" id="mk-Chambéry" data-city="Chambéry" transform="translate(400,313)" onclick="handleMapClick(this)">
+          <rect x="-5" y="-92" width="70" height="120" fill="transparent" rx="4"/>
+          <circle class="mk-pulse" r="13" stroke="#A0A8BC"/>
+          <circle class="mk-dot"   r="5"  fill="#A0A8BC"/>
+          <line  class="mk-stem"  x1="3" y1="-5" x2="26" y2="-38" stroke="#A0A8BC" stroke-width="1.3"/>
+          <g transform="translate(30,-62)" id="mbadge-Chambéry">
+            <rect class="mk-badge-bg" x="-30" y="-26" width="60" height="52" rx="12"
+                  fill="white" fill-opacity="0.94" stroke="#A0A8BC" stroke-width="1.8"/>
+            <text class="mk-icon" id="micon-Chambéry"   x="0" y="-7"  text-anchor="middle" font-size="21">⛅</text>
+            <text class="mk-count" id="mcount-Chambéry" x="0" y="18"  text-anchor="middle" font-size="12" fill="#A0A8BC">—</text>
+          </g>
+          <text class="mk-city" x="0" y="20" text-anchor="middle">Chambéry</text>
+        </g>
+
+        <!-- Dynamic markers for additional sites (injected by JS) -->
+        <g id="dynamic-markers"></g>
+
+      </svg>
     </div>
 
-    <main class="detail-main">
-      <div class="detail-eyebrow"><span class="live-dot"></span> Données en temps réel</div>
-      <div class="detail-site-label" id="detail-site-label">—</div>
-
-      <div class="counter-wrap">
-        <div class="counter-label">JOURS</div>
-        <span class="count-number" id="count">—</span>
+    <!-- Detail Panel -->
+    <div class="detail-panel" id="detail-panel">
+      <div class="panel-welcome" id="panel-welcome">
+        <div class="panel-welcome-icon">📍</div>
+        <div class="panel-welcome-title">Sélectionnez un centre</div>
+        <div class="panel-welcome-sub">Cliquez sur un marqueur de la carte ou sur une carte ci-dessous pour afficher les détails du site.</div>
       </div>
-
-      <div class="counter-sub">Sans accident du travail</div>
-      <div class="counter-tagline" id="counter-tagline">—</div>
-
-      <div class="status-label-row">
-        <span class="status-icon-big" id="status-icon">—</span>
-        <div>
-          <div class="status-name-big" id="status-name">—</div>
-          <div class="status-desc"    id="status-desc">—</div>
+      <div class="panel-site" id="panel-site">
+        <div class="panel-top">
+          <div class="panel-site-row">
+            <div>
+              <div class="panel-name" id="panel-name">—</div>
+              <div class="panel-loc" id="panel-loc">—</div>
+            </div>
+            <div class="panel-badge" id="panel-badge">—</div>
+          </div>
+        </div>
+        <div class="panel-counter-wrap">
+          <div class="panel-days-lbl">Jours sans accident</div>
+          <span class="panel-days-num" id="panel-days">—</span>
+          <div class="panel-days-sub" id="panel-tagline">—</div>
+        </div>
+        <div class="panel-stats">
+          <div class="panel-stat-row">
+            <span class="panel-stat-lbl">Depuis le</span>
+            <span class="panel-stat-val" id="panel-start">—</span>
+          </div>
+          <div class="panel-stat-row">
+            <span class="panel-stat-lbl">Record historique</span>
+            <span class="panel-stat-val green" id="panel-record">—</span>
+          </div>
+          <div class="panel-stat-row">
+            <span class="panel-stat-lbl">Dernier accident</span>
+            <span class="panel-stat-val" id="panel-last">—</span>
+          </div>
+        </div>
+        <div class="panel-record" id="panel-record-pill">Nouveau record en cours !</div>
+        <div class="panel-footer">
+          <button class="btn-view" id="btn-view-detail">Voir le compteur complet</button>
         </div>
       </div>
+    </div>
+  </div>
 
-      <div class="status-bar">
-        <div class="si" id="si0"><div class="si-icon">⛈</div><div class="si-name">Alerte</div><div class="si-range">0–29 j</div></div>
-        <div class="si" id="si1"><div class="si-icon">🌧</div><div class="si-name">Vigilance</div><div class="si-range">30–89 j</div></div>
-        <div class="si" id="si2"><div class="si-icon">⛅</div><div class="si-name">Progrès</div><div class="si-range">90–179 j</div></div>
-        <div class="si" id="si3"><div class="si-icon">🌤</div><div class="si-name">Éclaircie</div><div class="si-range">180–364 j</div></div>
-        <div class="si" id="si4"><div class="si-icon">☀️</div><div class="si-name">Excellence</div><div class="si-range">365 j+</div></div>
+  <!-- Carousel -->
+  <div class="carousel-section">
+    <div class="carousel-header">
+      <div class="carousel-title">🏢 Centres d'appel — cliquer pour ouvrir</div>
+      <div class="carousel-nav">
+        <button class="btn-nav" id="btn-prev" onclick="carouselPrev()">‹</button>
+        <button class="btn-nav" id="btn-next" onclick="carouselNext()">›</button>
       </div>
-
-      <div class="stats-row">
-        <div class="stat-box"><div class="stat-lbl">Depuis le</div><div class="stat-val" id="start-date">—</div></div>
-        <div class="stat-box"><div class="stat-lbl">Record historique</div><div class="stat-val green" id="record-val">—</div></div>
-        <div class="stat-box"><div class="stat-lbl">Dernier accident</div><div class="stat-val" id="last-accident">—</div></div>
-      </div>
-
-      <div class="record-pill" id="record-pill">Nouveau record en cours !</div>
-
-      <div class="actions-row">
-        <button class="btn-action btn-edit"  onclick="askWithPin('edit')">✎ Modifier le compteur</button>
-        <button class="btn-action btn-reset" onclick="askWithPin('reset')">⚠ Signaler un accident</button>
-      </div>
-
-      <div class="date-footer" id="today-date"></div>
-    </main>
-
-    <div class="ticker-wrap" id="ticker-wrap">
-      <div class="ticker-tag" id="ticker-tag">SÉCURITÉ</div>
-      <div class="ticker-track-outer">
-        <div class="ticker-track" id="ticker-track"><span id="tick1"></span><span id="tick2"></span></div>
-      </div>
+    </div>
+    <div class="carousel-track-outer">
+      <div class="carousel-track" id="carousel-track"></div>
     </div>
   </div>
 
 </div>
 
+<!-- ════════════════ SITE DETAIL ══════════════════════ -->
+<div class="screen" id="screen-site">
+
+  <!-- Large elegant side navigation arrows -->
+  <button class="btn-side-nav nav-left" onclick="prevSite()" id="btn-side-prev" title="Site précédent">
+    <svg viewBox="0 0 24 56" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="16,8 8,28 16,48"/>
+    </svg>
+  </button>
+  <button class="btn-side-nav nav-right" onclick="nextSite()" id="btn-side-next" title="Site suivant">
+    <svg viewBox="0 0 24 56" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="8,8 16,28 8,48"/>
+    </svg>
+  </button>
+
+  <div class="site-nav">
+    <button class="btn-back" onclick="goToDashboard()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Retour
+    </button>
+    <div class="nav-sep"></div>
+    <div>
+      <span class="nav-site-name" id="nav-site-name">—</span>
+      <span class="nav-site-loc"  id="nav-site-loc"></span>
+    </div>
+    <div class="site-nav-arrows">
+      <span class="nav-site-idx" id="nav-site-idx">1 / 4</span>
+    </div>
+  </div>
+
+  <main class="detail-main">
+    <div class="detail-eyebrow"><span class="live-dot"></span> Données en temps réel</div>
+    <div class="detail-site-label" id="detail-site-label">—</div>
+
+    <div class="counter-wrap">
+      <div class="counter-label">JOURS</div>
+      <span class="count-number" id="count">—</span>
+    </div>
+
+    <div class="counter-sub">Sans accident du travail</div>
+    <div class="counter-tagline" id="counter-tagline">—</div>
+
+    <div class="status-label-row">
+      <span class="status-icon-big" id="status-icon">—</span>
+      <div>
+        <div class="status-name-big" id="status-name">—</div>
+        <div class="status-desc"    id="status-desc">—</div>
+      </div>
+    </div>
+
+    <div class="status-bar">
+      <div class="si" id="si0"><div class="si-icon">⛈</div><div class="si-name">Alerte</div><div class="si-range">0–29 j</div></div>
+      <div class="si" id="si1"><div class="si-icon">🌧</div><div class="si-name">Vigilance</div><div class="si-range">30–89 j</div></div>
+      <div class="si" id="si2"><div class="si-icon">⛅</div><div class="si-name">Progrès</div><div class="si-range">90–179 j</div></div>
+      <div class="si" id="si3"><div class="si-icon">🌤</div><div class="si-name">Éclaircie</div><div class="si-range">180–364 j</div></div>
+      <div class="si" id="si4"><div class="si-icon">☀️</div><div class="si-name">Excellence</div><div class="si-range">365 j+</div></div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-box"><div class="stat-lbl">Depuis le</div><div class="stat-val" id="start-date">—</div></div>
+      <div class="stat-box"><div class="stat-lbl">Record historique</div><div class="stat-val green" id="record-val">—</div></div>
+      <div class="stat-box"><div class="stat-lbl">Dernier accident</div><div class="stat-val" id="last-accident">—</div></div>
+    </div>
+
+    <div class="record-pill" id="record-pill">Nouveau record en cours !</div>
+
+    <div class="actions-row">
+      <button class="btn-action btn-edit"  onclick="askWithPin('edit')">✎ Modifier le compteur</button>
+      <button class="btn-action btn-reset" onclick="askWithPin('reset')">⚠ Signaler un accident</button>
+    </div>
+
+    <div class="date-footer" id="today-date"></div>
+  </main>
+
+  <div class="ticker-wrap" id="ticker-wrap">
+    <div class="ticker-tag" id="ticker-tag">SÉCURITÉ</div>
+    <div class="ticker-track-outer">
+      <div class="ticker-track" id="ticker-track"><span id="tick1"></span><span id="tick2"></span></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- .app -->
+
+<!-- ════════ SETTINGS ═════════════════════════════ -->
+<div class="overlay" id="settings-overlay">
+  <div class="dialog settings-dialog">
+    <div class="settings-head">
+      <span class="settings-head-icon">⚙</span>
+      <div class="settings-head-text">
+        <div class="settings-head-title">Réglages</div>
+        <div class="settings-head-sub">Gérer les centres d'appel RCAD</div>
+      </div>
+      <button class="settings-close" onclick="closeOverlay('settings-overlay')">✕</button>
+    </div>
+
+    <div class="settings-section">Centres configurés</div>
+    <div class="settings-sites" id="settings-sites-list"></div>
+
+    <!-- Add new site form -->
+    <div class="settings-add-form" id="settings-add-form">
+      <div class="settings-section" style="margin-bottom:10px">Nouveau centre</div>
+      <label class="field-lbl" for="settings-new-name">Nom du centre *</label>
+      <input class="field-input" type="text" id="settings-new-name" placeholder="Ex : RCAD Lyon" maxlength="50"/>
+      <label class="field-lbl" for="settings-new-loc">Ville / Localisation</label>
+      <input class="field-input" type="text" id="settings-new-loc" placeholder="Ex : Lyon" maxlength="60"/>
+      <div class="input-mode-tabs">
+        <button class="input-tab active" id="settings-tab-days" onclick="switchSettingsTab('days')">📅 Nombre de jours</button>
+        <button class="input-tab" id="settings-tab-date" onclick="switchSettingsTab('date')">🗓 Date du dernier accident</button>
+      </div>
+      <div class="input-mode-panel active" id="settings-panel-days">
+        <label class="field-lbl" for="settings-new-days">Jours sans accident actuels</label>
+        <input class="field-input-big" type="number" id="settings-new-days" min="0" max="9999" placeholder="0"/>
+      </div>
+      <div class="input-mode-panel" id="settings-panel-date">
+        <label class="field-lbl" for="settings-new-date">Date du dernier accident</label>
+        <input type="date" id="settings-new-date" class="date-field" style="margin-bottom:0"/>
+        <div class="field-hint">Le compteur démarrera le lendemain de cette date.</div>
+      </div>
+      <div class="dialog-btns" style="margin-top:4px">
+        <button class="btn-apply" onclick="confirmAddSiteFromSettings()">Créer le centre</button>
+        <button class="btn-cancel" onclick="hideSettingsAddForm()">Annuler</button>
+      </div>
+    </div>
+
+    <button class="btn-settings-add" id="btn-settings-add-trigger" onclick="showSettingsAddForm()">
+      <span style="font-size:1rem;line-height:1">+</span> Ajouter un centre
+    </button>
+  </div>
+</div>
+
+<!-- ════════ EDIT SITE INFO ═══════════════════════ -->
+<div class="overlay" id="edit-siteinfo-overlay">
+  <div class="dialog">
+    <span class="dialog-icon">✎</span>
+    <div class="dialog-title yellow">Modifier le centre</div>
+    <div class="dialog-sub">Modifiez les informations et le compteur du centre.</div>
+    <label class="field-lbl" for="esi-name">Nom du centre</label>
+    <input class="field-input" type="text" id="esi-name" maxlength="50"/>
+    <label class="field-lbl" for="esi-loc">Ville / Localisation</label>
+    <input class="field-input" type="text" id="esi-loc" maxlength="60"/>
+    <label class="field-lbl" for="esi-days">Jours sans accident actuels</label>
+    <input class="field-input-big" type="number" id="esi-days" min="0" max="9999"/>
+    <div class="field-hint">Le compteur et la date de départ seront mis à jour.</div>
+    <div class="dialog-btns">
+      <button class="btn-apply" onclick="saveSiteInfo()">Enregistrer</button>
+      <button class="btn-cancel" onclick="closeOverlay('edit-siteinfo-overlay')">Annuler</button>
+    </div>
+  </div>
+</div>
+
 <button class="purge-btn" onclick="askWithPin('purge')">⊗ Réinitialisation totale</button>
 
-<!-- PIN -->
+<!-- ════════ PIN ═══════════════════════════════════ -->
 <div class="overlay" id="pin-overlay">
   <div class="dialog pin-dialog">
     <div class="pin-title">🔐 Code PIN</div>
@@ -531,30 +1121,18 @@ html, body {
   </div>
 </div>
 
-<!-- ADD SITE -->
+<!-- ════════ ADD SITE ══════════════════════════════ -->
 <div class="overlay" id="add-site-overlay">
   <div class="dialog">
     <span class="dialog-icon">🏢</span>
     <div class="dialog-title yellow">Nouveau centre</div>
     <div class="dialog-sub">Configurez les informations du nouveau centre d'appel.</div>
     <label class="field-lbl" for="new-site-name">Nom du centre *</label>
-    <input class="field-input" type="text" id="new-site-name" placeholder="Ex : RCAD Lyon" maxlength="50" />
+    <input class="field-input" type="text" id="new-site-name" placeholder="Ex : RCAD Lyon" maxlength="50"/>
     <label class="field-lbl" for="new-site-loc">Ville / Localisation</label>
-    <input class="field-input" type="text" id="new-site-loc" placeholder="Ex : Lyon Part-Dieu" maxlength="60" />
-    <div class="field-lbl" style="margin-bottom:8px;">Compteur initial</div>
-    <div class="input-mode-tabs">
-      <button class="input-tab active" id="add-tab-days" onclick="switchAddTab('days')">📅 Nombre de jours</button>
-      <button class="input-tab" id="add-tab-date" onclick="switchAddTab('date')">🗓 Date du dernier accident</button>
-    </div>
-    <div class="input-mode-panel active" id="add-panel-days">
-      <label class="field-lbl" for="new-site-days">Jours sans accident actuels</label>
-      <input class="field-input-big" type="number" id="new-site-days" min="0" max="9999" placeholder="0" />
-    </div>
-    <div class="input-mode-panel" id="add-panel-date">
-      <label class="field-lbl" for="new-site-date">Date du dernier accident</label>
-      <input type="date" id="new-site-date" class="date-field" />
-      <div class="field-hint" style="margin-top:-10px;">Le compteur démarrera le lendemain de cette date.</div>
-    </div>
+    <input class="field-input" type="text" id="new-site-loc" placeholder="Ex : Lyon Part-Dieu" maxlength="60"/>
+    <label class="field-lbl" for="new-site-days">Jours sans accident actuels</label>
+    <input class="field-input-big" type="number" id="new-site-days" min="0" max="9999" placeholder="0"/>
     <div class="dialog-btns">
       <button class="btn-apply" onclick="confirmAddSite()">Créer le centre</button>
       <button class="btn-cancel" onclick="closeOverlay('add-site-overlay')">Annuler</button>
@@ -562,7 +1140,7 @@ html, body {
   </div>
 </div>
 
-<!-- DELETE SITE -->
+<!-- ════════ DELETE SITE ══════════════════════════ -->
 <div class="overlay" id="del-site-overlay">
   <div class="dialog">
     <span class="dialog-icon">🗑️</span>
@@ -576,14 +1154,14 @@ html, body {
   </div>
 </div>
 
-<!-- RESET -->
+<!-- ════════ RESET ════════════════════════════════ -->
 <div class="overlay" id="confirm-overlay">
   <div class="dialog">
     <span class="dialog-icon">🚨</span>
     <div class="dialog-title red">Accident à déclarer</div>
     <div class="dialog-sub">Le compteur sera remis à zéro. Le record sera conservé.</div>
     <label class="field-lbl" for="accident-date">Date de l'accident</label>
-    <input type="date" id="accident-date" class="date-field" />
+    <input type="date" id="accident-date" class="date-field"/>
     <div class="dialog-btns">
       <button class="btn-confirm" onclick="confirmReset()">Confirmer</button>
       <button class="btn-cancel" onclick="closeOverlay('confirm-overlay')">Annuler</button>
@@ -591,7 +1169,7 @@ html, body {
   </div>
 </div>
 
-<!-- EDIT -->
+<!-- ════════ EDIT ═════════════════════════════════ -->
 <div class="overlay" id="edit-overlay">
   <div class="dialog">
     <span class="dialog-icon">✎</span>
@@ -603,12 +1181,12 @@ html, body {
     </div>
     <div class="input-mode-panel active" id="edit-panel-days">
       <label class="field-lbl" for="days-input">Nombre de jours sans accident</label>
-      <input class="field-input-big" type="number" id="days-input" min="0" max="9999" placeholder="0" />
-      <div class="field-hint">Ex : si le dernier accident remonte à 45 jours, entrez 45.</div>
+      <input class="field-input-big" type="number" id="days-input" min="0" max="9999" placeholder="0"/>
+      <div class="field-hint">Le compteur reprendra automatiquement à partir de cette valeur.</div>
     </div>
     <div class="input-mode-panel" id="edit-panel-date">
       <label class="field-lbl" for="edit-accident-date">Date du dernier accident</label>
-      <input type="date" id="edit-accident-date" class="date-field" />
+      <input type="date" id="edit-accident-date" class="date-field"/>
       <div class="field-hint">Le compteur démarrera le lendemain de cette date.</div>
     </div>
     <div class="dialog-btns">
@@ -618,7 +1196,7 @@ html, body {
   </div>
 </div>
 
-<!-- PURGE -->
+<!-- ════════ PURGE ════════════════════════════════ -->
 <div class="overlay" id="purge-overlay">
   <div class="dialog">
     <span class="dialog-icon">⚠️</span>
@@ -632,246 +1210,733 @@ html, body {
   </div>
 </div>
 
+<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 <script>
+/* ══════════════════════════════════════════════════════
+   FIREBASE INIT
+══════════════════════════════════════════════════════ */
 firebase.initializeApp({
-  apiKey: "AIzaSyDQnyIU1QfIalA9t7W4tRS6rX8qJbLWrUk",
-  authDomain: "compteur-securite-uosud-est.firebaseapp.com",
-  databaseURL: "https://compteur-securite-uosud-est-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "compteur-securite-uosud-est",
-  storageBucket: "compteur-securite-uosud-est.firebasestorage.app",
-  messagingSenderId: "14435818144",
-  appId: "1:14435818144:web:23bdaf9ec44ffce26f87c5"
+  apiKey:"AIzaSyDQnyIU1QfIalA9t7W4tRS6rX8qJbLWrUk",
+  authDomain:"compteur-securite-uosud-est.firebaseapp.com",
+  databaseURL:"https://compteur-securite-uosud-est-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId:"compteur-securite-uosud-est",
+  storageBucket:"compteur-securite-uosud-est.firebasestorage.app",
+  messagingSenderId:"14435818144",
+  appId:"1:14435818144:web:23bdaf9ec44ffce26f87c5"
 });
-const db = firebase.database();
+const db        = firebase.database();
 const sitesRef  = db.ref('sites_v2');
 const configRef = db.ref('config');
 
-// Initialiser les 4 centres RCAD si la base est vide
-const RCAD_SITES = [
-  { name: 'RCAD Béziers',           location: 'Béziers' },
-  { name: 'RCAD Marseille',         location: 'Marseille' },
-  { name: 'RCAD Chambéry',          location: 'Chambéry' },
-  { name: 'RCAD Valence',           location: 'Valence' },
-  { name: 'RCAD Clermont-Ferrand',  location: 'Clermont-Ferrand' }
+/* Seed 4 RCAD sites if DB is empty */
+const RCAD_SITES=[
+  {name:'RCAD Béziers',  location:'Béziers'},
+  {name:'RCAD Marseille',location:'Marseille'},
+  {name:'RCAD Chambéry', location:'Chambéry'},
+  {name:'RCAD Valence',  location:'Valence'}
 ];
-sitesRef.once('value').then(snap => {
-  if (!snap.exists()) {
-    RCAD_SITES.forEach(s => sitesRef.push().set({ name: s.name, location: s.location, startDate: new Date().toISOString(), record: 0 }));
-  }
+sitesRef.once('value').then(snap=>{
+  if(!snap.exists())
+    RCAD_SITES.forEach(s=>sitesRef.push().set({name:s.name,location:s.location,startDate:new Date().toISOString(),record:0}));
 });
 
-// Status
-const STATUS = [
-  { label:'Alerte',     desc:'0 à 29 jours',       icon:'⛈', color:'#e8002d', bg:'rgba(232,0,45,0.12)',    tagBg:'#e8002d',              tagColor:'#fff',     counterColor:'#e8002d', rankBg:'rgba(232,0,45,0.2)',   rankColor:'#e8002d', ticker:'⚠ Mobilisation générale — chaque jour sans accident compte — la sécurité est notre priorité commune — signalez tout risque immédiatement — ⚠ Mobilisation générale' },
-  { label:'Vigilance',  desc:'30 à 89 jours',       icon:'🌧', color:'#f97316', bg:'rgba(249,115,22,0.1)',   tagBg:'#f97316',              tagColor:'#fff',     counterColor:'#f97316', rankBg:'rgba(249,115,22,0.2)', rankColor:'#f97316', ticker:'➤ Bons réflexes en place — continuez les efforts — signalez tout risque potentiel — ensemble vers une performance durable — ➤ Bons réflexes en place' },
-  { label:'Progrès',    desc:'90 à 179 jours',      icon:'⛅', color:'#eab308', bg:'rgba(234,179,8,0.1)',    tagBg:'rgba(234,179,8,0.15)', tagColor:'#eab308',  counterColor:'#eab308', rankBg:'rgba(234,179,8,0.15)',rankColor:'#eab308', ticker:'◆ Trois mois sans accident — excellente dynamique — la prévention porte ses fruits — cap sur les 180 jours — ◆ Trois mois sans accident' },
-  { label:'Éclaircie',  desc:'180 à 364 jours',     icon:'🌤', color:'#22c55e', bg:'rgba(34,197,94,0.1)',    tagBg:'rgba(34,197,94,0.15)', tagColor:'#22c55e',  counterColor:'#22c55e', rankBg:'rgba(34,197,94,0.15)',rankColor:'#22c55e', ticker:'★ Plus de six mois sans accident — performance remarquable — la culture sécurité est ancrée — cap sur les 365 jours — ★ Plus de six mois sans accident' },
-  { label:'Excellence', desc:'365 jours et plus',   icon:'☀️', color:'#22c55e', bg:'rgba(34,197,94,0.15)',   tagBg:'rgba(34,197,94,0.2)', tagColor:'#22c55e',  counterColor:'#22c55e', rankBg:'rgba(34,197,94,0.2)', rankColor:'#22c55e', ticker:'✦ EXCELLENCE — un an sans accident — performance exceptionnelle — félicitations à toute l\'équipe — zéro blessure, objectif atteint — ✦ EXCELLENCE' }
+/* ══════════════════════════════════════════════════════
+   STATUS CONFIG
+══════════════════════════════════════════════════════ */
+const STATUS=[
+  {label:'Alerte',    desc:'0 à 29 jours',     icon:'⛈', color:'#E8002D', bg:'rgba(232,0,45,0.1)',    tagBg:'#E8002D',              tagColor:'#fff',    counterColor:'#E8002D', markerColor:'#E8002D', ticker:'⚠ Mobilisation générale — chaque jour sans accident compte — la sécurité est notre priorité — ⚠ Mobilisation générale'},
+  {label:'Vigilance', desc:'30 à 89 jours',     icon:'🌧', color:'#E07000', bg:'rgba(224,112,0,0.09)', tagBg:'#E07000',              tagColor:'#fff',    counterColor:'#E07000', markerColor:'#E07000', ticker:'➤ Bons réflexes en place — continuez les efforts — signalez tout risque — ➤ Bons réflexes en place'},
+  {label:'Progrès',   desc:'90 à 179 jours',    icon:'⛅', color:'#C49A00', bg:'rgba(196,154,0,0.09)', tagBg:'rgba(196,154,0,0.15)', tagColor:'#9A7800', counterColor:'#C49A00', markerColor:'#C49A00', ticker:'◆ Trois mois sans accident — excellente dynamique — cap sur les 180 jours — ◆ Trois mois sans accident'},
+  {label:'Éclaircie', desc:'180 à 364 jours',   icon:'🌤', color:'#18A05B', bg:'rgba(24,160,91,0.09)', tagBg:'rgba(24,160,91,0.12)', tagColor:'#0E6B3D', counterColor:'#18A05B', markerColor:'#18A05B', ticker:'★ Plus de six mois sans accident — performance remarquable — cap sur les 365 jours — ★ Six mois sans accident'},
+  {label:'Excellence',desc:'365 jours et plus', icon:'☀️', color:'#18A05B', bg:'rgba(24,160,91,0.13)', tagBg:'rgba(24,160,91,0.15)', tagColor:'#0E6B3D', counterColor:'#18A05B', markerColor:'#18A05B', ticker:'✦ EXCELLENCE — un an sans accident — performance exceptionnelle — félicitations à toute l\'équipe — ✦ EXCELLENCE'}
 ];
-function getStatusIdx(d) { if(d<30)return 0; if(d<90)return 1; if(d<180)return 2; if(d<365)return 3; return 4; }
+function getStatusIdx(d){if(d<30)return 0;if(d<90)return 1;if(d<180)return 2;if(d<365)return 3;return 4;}
 
-// Helpers
-function fmtDate(iso) { if(!iso)return'—'; return new Date(iso).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric'}); }
-function daysDiff(iso) { if(!iso)return 0; return Math.max(0,Math.floor((Date.now()-new Date(iso).getTime())/86400000)); }
-function dateVeille(iso) { if(!iso)return'—'; const d=new Date(iso); d.setDate(d.getDate()-1); return d.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric'}); }
-function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function renderClock() {
+/* ══════════════════════════════════════════════════════
+   HELPERS
+══════════════════════════════════════════════════════ */
+function fmtDate(iso){if(!iso)return'—';return new Date(iso).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric'});}
+function daysDiff(iso){if(!iso)return 0;return Math.max(0,Math.floor((Date.now()-new Date(iso).getTime())/86400000));}
+function dateVeille(iso){if(!iso)return'—';const d=new Date(iso);d.setDate(d.getDate()-1);return d.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric'});}
+function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function renderClock(){
   const now=new Date();
   const s=now.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'})+' — '+now.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
-  const a=document.getElementById('topbar-clock'); if(a)a.textContent=s;
-  const b=document.getElementById('today-date');   if(b)b.textContent=s;
+  const a=document.getElementById('topbar-clock');if(a)a.textContent=s;
+  const b=document.getElementById('today-date');if(b)b.textContent=s;
 }
 
-// State
-let currentSiteId=null, detailListener=null, detailSIdx=-1, allSitesData={};
+/* ══════════════════════════════════════════════════════
+   STATE
+══════════════════════════════════════════════════════ */
+let currentSiteId=null, detailListener=null, detailSIdx=-1;
+let allSitesData={};
+let selectedPanelId=null; // currently shown in side panel
 
-// Dashboard
-sitesRef.on('value', snap => { allSitesData=snap.val()||{}; renderDashboard(allSitesData); });
+/* Map city → site id mapping (built dynamically by matching location name) */
+let cityToSiteId={};
 
-function renderDashboard(data) {
+/* ══════════════════════════════════════════════════════
+   DASHBOARD RENDERING
+══════════════════════════════════════════════════════ */
+sitesRef.on('value',snap=>{
+  allSitesData=snap.val()||{};
+  buildCityMap();
+  renderDashboard(allSitesData);
+  updateMapMarkers();
+  if(selectedPanelId&&allSitesData[selectedPanelId])
+    renderPanel(selectedPanelId,allSitesData[selectedPanelId]);
+});
+
+/* Map location names to site IDs */
+function buildCityMap(){
+  cityToSiteId={};
+  Object.entries(allSitesData).forEach(([id,d])=>{
+    if(d.location){
+      const city=d.location.trim();
+      cityToSiteId[city]=id;
+      // Also match partial (e.g. "Béziers" matches "RCAD Béziers")
+      const parts=city.split(/[\s,\/]+/);
+      parts.forEach(p=>{if(p.length>3)cityToSiteId[p]=id;});
+    }
+  });
+}
+
+function renderDashboard(data){
   const ids=Object.keys(data);
-  let total=0,alerts=0,best=0;
-  ids.forEach(id=>{ const d=daysDiff(data[id].startDate); total+=d; if(d<30)alerts++; if(d>best)best=d; });
-  document.getElementById('sum-sites').textContent = ids.length||'0';
-  document.getElementById('sum-days').textContent  = total;
-  document.getElementById('sum-alert').textContent = alerts;
-  document.getElementById('sum-best').textContent  = best>0?best+' j':'—';
-  const grid=document.getElementById('sites-grid');
-  if(!ids.length){ grid.innerHTML=`<div class="empty-state"><div class="empty-icon">🏢</div><div class="empty-title">Aucun centre configuré</div><div class="empty-sub">Cliquez sur « Ajouter un site » pour commencer</div></div>`; return; }
+  let total=0,alerts=0;
+  ids.forEach(id=>{const d=daysDiff(data[id].startDate);total+=d;if(d<30)alerts++;});
+  const avg=ids.length?Math.round(total/ids.length):0;
+  document.getElementById('sum-sites').textContent=ids.length||'0';
+  document.getElementById('sum-days').textContent=total;
+  document.getElementById('sum-alert').textContent=alerts;
+  document.getElementById('sum-avg').textContent=ids.length?avg+' j':'—';
+  renderCarousel(data,ids);
+}
+
+/* ── Carousel ──────────────────────────────────────── */
+function renderCarousel(data,ids){
+  const track=document.getElementById('carousel-track');
+  if(!ids.length){
+    track.innerHTML=`<div class="empty-state"><div class="empty-icon">🏢</div><div class="empty-title">Aucun centre configuré</div><div class="empty-sub">Ouvrez les Réglages pour ajouter un centre</div></div>`;
+    return;
+  }
+  // Sort by days desc
   ids.sort((a,b)=>daysDiff(data[b].startDate)-daysDiff(data[a].startDate));
-  const medals=['🥇','🥈','🥉'];
-  grid.innerHTML=ids.map((id,i)=>{
-    const s=data[id], days=daysDiff(s.startDate), si=STATUS[getStatusIdx(days)];
-    const isRecord=days>0&&days>=(s.record||0);
-    const rl=i<3?medals[i]:`#${i+1}`;
-    const rs=i<3?`background:${si.rankBg};color:${si.rankColor};`:`background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.25);font-size:0.7rem;`;
-    return`<div class="site-card" onclick="openSite('${id}')">
-      <div class="card-accent" style="background:${si.color};opacity:0.7;"></div>
-      <div class="card-rank" style="${rs}">${rl}</div>
-      <button class="btn-del-card" onclick="event.stopPropagation();askDeleteSite('${id}')" title="Supprimer">✕</button>
-      <div class="card-head">
-        <div><div class="card-name">${escHtml(s.name)}</div>${s.location?`<div class="card-loc">📍 ${escHtml(s.location)}</div>`:''}</div>
-        <div class="card-badge" style="background:${si.bg};color:${si.color};">${si.icon} ${si.label}</div>
-      </div>
-      <div class="card-counter">
-        <div class="card-days-num" style="color:${si.color};">${days}</div>
-        <div class="card-days-unit">jours</div>
-      </div>
-      <div class="card-divider"></div>
-      <div class="card-stats">
-        <div class="card-stat"><span class="cs-label">Depuis le</span><span class="cs-val">${fmtDate(s.startDate)}</span></div>
-        <div class="card-stat"><span class="cs-label">Record</span><span class="cs-val green">${s.record>0?s.record+' j':'—'}</span></div>
-        <div class="card-stat"><span class="cs-label">Dernier accident</span><span class="cs-val">${dateVeille(s.startDate)}</span></div>
-      </div>
-      <div class="card-footer">
-        <div class="card-record ${isRecord?'visible':''}">Nouveau record</div>
-        <div class="card-arrow">→</div>
-      </div>
+  track.innerHTML=ids.map(id=>{
+    const s=data[id],days=daysDiff(s.startDate),si=STATUS[getStatusIdx(days)];
+    const isActive=id===selectedPanelId;
+    return`<div class="c-card${isActive?' active':''}" id="cc-${id}" onclick="selectSite('${id}')">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:${si.color};border-radius:14px 14px 0 0;opacity:.7;"></div>
+      <button class="cc-del" onclick="event.stopPropagation();askDeleteSite('${id}')" title="Supprimer">✕</button>
+      <div class="cc-name">${escHtml(s.name)}</div>
+      <div class="cc-loc">📍 ${escHtml(s.location||'—')}</div>
+      <div class="cc-count" style="color:${si.color}">${days}</div>
+      <div class="cc-unit">jours</div>
+      <div class="cc-badge" style="background:${si.bg};color:${si.color}">${si.icon} ${si.label}</div>
     </div>`;
   }).join('');
 }
 
-// Navigation
-function showScreen(n) { document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById('screen-'+n).classList.add('active'); }
-function goToDashboard() { if(currentSiteId&&detailListener)sitesRef.child(currentSiteId).off('value',detailListener); detailListener=null;currentSiteId=null; showScreen('dashboard'); }
-function openSite(id) {
-  if(currentSiteId&&detailListener)sitesRef.child(currentSiteId).off('value',detailListener);
-  currentSiteId=id; detailSIdx=-1; showScreen('site');
-  detailListener=sitesRef.child(id).on('value',snap=>{ const d=snap.val(); if(!d){goToDashboard();return;} renderDetail(id,d); });
+/* ══════════════════════════════════════════════════════
+   CITY COORDS LOOKUP (for dynamic map markers)
+   Formula: x = 22+(lon+5.1)/14.7*505  y = 22+(51.1-lat)/9.8*516
+══════════════════════════════════════════════════════ */
+const CITY_COORDS={
+  'beziers':{lat:43.34,lon:3.22},'béziers':{lat:43.34,lon:3.22},
+  'marseille':{lat:43.30,lon:5.37},
+  'chambery':{lat:45.57,lon:5.92},'chambéry':{lat:45.57,lon:5.92},
+  'valence':{lat:44.93,lon:4.89},
+  'clermont-ferrand':{lat:45.78,lon:3.09},'clermont':{lat:45.78,lon:3.09},
+  'lyon':{lat:45.75,lon:4.83},'paris':{lat:48.85,lon:2.35},
+  'bordeaux':{lat:44.84,lon:-0.58},'toulouse':{lat:43.60,lon:1.44},
+  'nantes':{lat:47.22,lon:-1.55},'nice':{lat:43.70,lon:7.26},
+  'strasbourg':{lat:48.57,lon:7.75},'montpellier':{lat:43.61,lon:3.87},
+  'lille':{lat:50.63,lon:3.06},'rennes':{lat:48.11,lon:-1.68},
+  'grenoble':{lat:45.19,lon:5.72},'tours':{lat:47.39,lon:0.69},
+  'dijon':{lat:47.32,lon:5.04},'caen':{lat:49.19,lon:-0.36},
+  'rouen':{lat:49.44,lon:1.10},'metz':{lat:49.12,lon:6.18},
+  'nancy':{lat:48.69,lon:6.18},'nimes':{lat:43.83,lon:4.36},'nîmes':{lat:43.83,lon:4.36},
+  'avignon':{lat:43.95,lon:4.81},'aix':{lat:43.53,lon:5.45},
+  'toulon':{lat:43.12,lon:5.93},'brest':{lat:48.39,lon:-4.49},
+  'perpignan':{lat:42.69,lon:2.89},'limoges':{lat:45.83,lon:1.26},
+  'besancon':{lat:47.24,lon:6.02},'besançon':{lat:47.24,lon:6.02},
+  'orleans':{lat:47.90,lon:1.91},'orléans':{lat:47.90,lon:1.91},
+  'reims':{lat:49.26,lon:4.03},'amiens':{lat:49.89,lon:2.30},
+  'angers':{lat:47.47,lon:-0.56},'mulhouse':{lat:47.75,lon:7.34},
+  'pau':{lat:43.30,lon:-0.37},'bayonne':{lat:43.49,lon:-1.47},
+  'poitiers':{lat:46.58,lon:0.34},'la rochelle':{lat:46.16,lon:-1.15},
+  'troyes':{lat:48.30,lon:4.08},'saint-etienne':{lat:45.43,lon:4.39},'saint-étienne':{lat:45.43,lon:4.39},
+  'annecy':{lat:45.90,lon:6.12},'gap':{lat:44.56,lon:6.08},
+  'montauban':{lat:43.96,lon:1.35},'albi':{lat:43.93,lon:2.15},
+  'nimes':{lat:43.83,lon:4.36},'ales':{lat:44.13,lon:4.08},'alès':{lat:44.13,lon:4.08},
+  'lorient':{lat:47.75,lon:-3.36},'quimper':{lat:47.99,lon:-4.10},
+  'vannes':{lat:47.66,lon:-2.75},'saint-malo':{lat:48.65,lon:-2.01},
+  'saint-nazaire':{lat:47.27,lon:-2.21},'le mans':{lat:48.00,lon:0.20},
+  'chartres':{lat:48.45,lon:1.49},'cherbourg':{lat:49.64,lon:-1.62},
+  'beauvais':{lat:49.43,lon:2.08},'laon':{lat:49.56,lon:3.62},
+  'lens':{lat:50.43,lon:2.83},'arras':{lat:50.29,lon:2.77},
+  'calais':{lat:50.95,lon:1.85},'dunkerque':{lat:51.03,lon:2.38},
+  'colmar':{lat:48.08,lon:7.36},'belfort':{lat:47.64,lon:6.86},
+  'macon':{lat:46.30,lon:4.83},'mâcon':{lat:46.30,lon:4.83},
+  'bourg-en-bresse':{lat:46.20,lon:5.22},'chalon':{lat:46.78,lon:4.85},
+  'vichy':{lat:46.13,lon:3.43},'moulins':{lat:46.56,lon:3.33},
+  'aurillac':{lat:44.93,lon:2.44},'rodez':{lat:44.35,lon:2.57},
+  'tarbes':{lat:43.23,lon:0.07},'auch':{lat:43.65,lon:0.59},
+  'sete':{lat:43.40,lon:3.70},'sète':{lat:43.40,lon:3.70},
+  'narbonne':{lat:43.18,lon:3.00},'carcassonne':{lat:43.21,lon:2.35},
+  'foix':{lat:42.97,lon:1.61},'cahors':{lat:44.44,lon:1.44},
+  'agen':{lat:44.20,lon:0.62},'périgueux':{lat:45.18,lon:0.72},'perigueux':{lat:45.18,lon:0.72},
+  'la roche-sur-yon':{lat:46.67,lon:-1.43},'cholet':{lat:47.06,lon:-0.88},
+  'laval':{lat:48.07,lon:-0.77},'le havre':{lat:49.49,lon:0.11},
+  'evreux':{lat:49.02,lon:1.15},'évreux':{lat:49.02,lon:1.15}
+};
+
+const _norm=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
+
+function getCityCoords(site){
+  if(site.lat&&site.lon)return{lat:site.lat,lon:site.lon};
+  const loc=_norm(site.location||''), nm=_norm(site.name||'');
+  // Try each known city
+  for(const[city,coords]of Object.entries(CITY_COORDS)){
+    const cn=_norm(city);
+    if(loc===cn||nm===cn||loc.includes(cn)||nm.includes(cn))return coords;
+  }
+  // Try words in location (last words = city name typically)
+  const words=(site.location||'').split(/[\s,\/\-]+/).filter(w=>w.length>2);
+  for(const w of words.reverse()){
+    const wn=_norm(w);
+    for(const[city,coords]of Object.entries(CITY_COORDS)){
+      if(_norm(city)===wn)return coords;
+    }
+  }
+  return{lat:46.5,lon:2.5}; // France center fallback
 }
-function renderDetail(id,d) {
-  const days=daysDiff(d.startDate), si=STATUS[getStatusIdx(days)];
-  document.getElementById('nav-site-name').textContent   = d.name;
-  document.getElementById('nav-site-loc').textContent    = d.location?'· '+d.location:'';
-  document.getElementById('detail-site-label').textContent = d.location?d.name+' — '+d.location:d.name;
-  document.getElementById('count').textContent           = days;
-  document.getElementById('count').style.color           = si.counterColor;
-  document.getElementById('start-date').textContent      = fmtDate(d.startDate);
-  document.getElementById('record-val').textContent      = d.record>0?d.record+' j':'—';
-  document.getElementById('last-accident').textContent   = dateVeille(d.startDate);
-  document.getElementById('counter-tagline').textContent = si.desc;
-  document.getElementById('status-icon').textContent     = si.icon;
-  document.getElementById('status-name').textContent     = si.label;
-  document.getElementById('status-name').style.color     = si.color;
-  document.getElementById('status-desc').textContent     = si.desc;
+
+function latLonToMapXY(lat,lon){
+  return{x:Math.round(22+(lon+5.1)/14.7*505), y:Math.round(22+(51.1-lat)/9.8*516)};
+}
+
+/* ── Map marker updates ───────────────────────────── */
+function updateMapMarkers(){
+  const cityKeys=['Béziers','Marseille','Chambéry','Valence'];
+  cityKeys.forEach(city=>{
+    const siteId=findSiteIdByCity(city);
+    const mkGroup=document.getElementById('mk-'+city);
+    if(!mkGroup)return;
+
+    mkGroup.dataset.siteId = siteId||'';
+    mkGroup.style.pointerEvents = 'all';
+
+    const defaultColor='#A0A8BC';
+    const pulse=mkGroup.querySelector('.mk-pulse');
+    const dot=mkGroup.querySelector('.mk-dot');
+    const stem=mkGroup.querySelector('.mk-stem');
+    const badgeBg=mkGroup.querySelector('.mk-badge-bg');
+    const iconEl=document.getElementById('micon-'+city);
+    const countEl=document.getElementById('mcount-'+city);
+
+    if(siteId&&allSitesData[siteId]){
+      const d=allSitesData[siteId];
+      const days=daysDiff(d.startDate);
+      const si=STATUS[getStatusIdx(days)];
+      const col=si.markerColor;
+      if(pulse){pulse.setAttribute('stroke',col);}
+      if(dot){dot.setAttribute('fill',col);}
+      if(stem){stem.setAttribute('stroke',col);}
+      if(badgeBg){badgeBg.setAttribute('stroke',col);badgeBg.setAttribute('fill-opacity','0.96');}
+      if(iconEl){iconEl.textContent=si.icon;}
+      if(countEl){countEl.textContent=days===0?'0 j':days+' j';countEl.setAttribute('fill',col);}
+    } else {
+      if(pulse){pulse.setAttribute('stroke',defaultColor);}
+      if(dot){dot.setAttribute('fill',defaultColor);}
+      if(stem){stem.setAttribute('stroke',defaultColor);}
+      if(badgeBg){badgeBg.setAttribute('stroke',defaultColor);}
+      if(iconEl){iconEl.textContent='⛅';}
+      if(countEl){countEl.textContent='—';countEl.setAttribute('fill',defaultColor);}
+    }
+    mkGroup.classList.toggle('active',siteId===selectedPanelId);
+  });
+
+  renderDynamicMarkers();
+}
+
+/* Render SVG markers for sites not in the 4 hardcoded cities */
+const HARDCODED_CITY_NORMS=['beziers','marseille','chambery','valence'];
+function isHardcoded(site){
+  const ln=_norm(site.location||''), nn=_norm(site.name||'');
+  return HARDCODED_CITY_NORMS.some(c=>ln.includes(c)||nn.includes(c));
+}
+
+function renderDynamicMarkers(){
+  const container=document.getElementById('dynamic-markers');
+  if(!container)return;
+  container.innerHTML='';
+  const ns='http://www.w3.org/2000/svg';
+
+  Object.entries(allSitesData).forEach(([id,site])=>{
+    if(isHardcoded(site))return;
+    const days=daysDiff(site.startDate);
+    const si=STATUS[getStatusIdx(days)];
+    const col=si.markerColor;
+    const coords=getCityCoords(site);
+    const{x,y}=latLonToMapXY(coords.lat,coords.lon);
+    const isActive=(id===selectedPanelId);
+    const badgeRight=(x<300); // put badge right if marker is on left half
+    const bx=badgeRight?30:-30;
+    const sx=badgeRight?3:-3, sx2=badgeRight?26:-26;
+
+    const g=document.createElementNS(ns,'g');
+    g.setAttribute('class','site-marker'+(isActive?' active':''));
+    g.setAttribute('id','mk-dyn-'+id);
+    g.setAttribute('data-site-id',id);
+    g.setAttribute('transform',`translate(${x},${y})`);
+
+    const pulse=document.createElementNS(ns,'circle');
+    pulse.setAttribute('class','mk-pulse');pulse.setAttribute('r','13');pulse.setAttribute('stroke',col);
+    g.appendChild(pulse);
+
+    const dot=document.createElementNS(ns,'circle');
+    dot.setAttribute('class','mk-dot');dot.setAttribute('r','5');dot.setAttribute('fill',col);g.appendChild(dot);
+
+    const stem=document.createElementNS(ns,'line');
+    stem.setAttribute('class','mk-stem');stem.setAttribute('x1',String(sx));stem.setAttribute('y1','-5');
+    stem.setAttribute('x2',String(sx2));stem.setAttribute('y2','-40');
+    stem.setAttribute('stroke',col);stem.setAttribute('stroke-width','1.3');g.appendChild(stem);
+
+    const bg=document.createElementNS(ns,'g');
+    bg.setAttribute('transform',`translate(${bx},-64)`);
+
+    const rect=document.createElementNS(ns,'rect');
+    rect.setAttribute('class','mk-badge-bg');rect.setAttribute('x','-30');rect.setAttribute('y','-26');
+    rect.setAttribute('width','60');rect.setAttribute('height','52');rect.setAttribute('rx','12');
+    rect.setAttribute('fill',isActive?col:'white');rect.setAttribute('fill-opacity','0.94');
+    rect.setAttribute('stroke',col);rect.setAttribute('stroke-width','1.8');bg.appendChild(rect);
+
+    const icon=document.createElementNS(ns,'text');
+    icon.setAttribute('class','mk-icon');icon.setAttribute('x','0');icon.setAttribute('y','-7');
+    icon.setAttribute('text-anchor','middle');icon.setAttribute('font-size','21');
+    icon.setAttribute('dominant-baseline','middle');icon.textContent=si.icon;bg.appendChild(icon);
+
+    const count=document.createElementNS(ns,'text');
+    count.setAttribute('class','mk-count');count.setAttribute('x','0');count.setAttribute('y','18');
+    count.setAttribute('text-anchor','middle');count.setAttribute('font-size','12');
+    count.setAttribute('fill',isActive?'#fff':col);
+    count.textContent=days+' j';bg.appendChild(count);
+
+    g.appendChild(bg);
+
+    const cityLabel=document.createElementNS(ns,'text');
+    cityLabel.setAttribute('class','mk-city');cityLabel.setAttribute('x','0');cityLabel.setAttribute('y','20');
+    cityLabel.setAttribute('text-anchor','middle');
+    const lbl=(site.location||site.name||'').split(/[\s,]+/).filter(w=>w.length>2&&isNaN(w));
+    cityLabel.textContent=(lbl[lbl.length-1]||site.name||'').slice(0,12);
+    g.appendChild(cityLabel);
+
+    g.addEventListener('click',()=>selectSite(id));
+    container.appendChild(g);
+  });
+}
+
+/* Map click → shows site detail in the right panel (not full screen) */
+function handleMapClick(el){
+  let target=el;
+  while(target&&!target.dataset.siteId&&target.parentElement){
+    target=target.parentElement;
+  }
+  const siteId=target&&target.dataset.siteId;
+  if(siteId) selectSite(siteId);
+}
+
+function findSiteIdByCity(city){
+  const norm=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
+  const cn=norm(city);
+  const matches=[];
+  for(const [id,d] of Object.entries(allSitesData)){
+    const ln=norm(d.location||'');
+    const nn=norm(d.name||'');
+    if(ln===cn||nn===cn||ln.includes(cn)||nn.includes(cn)||(cn.includes(ln)&&ln.length>3)||(cn.includes(nn)&&nn.length>3)){
+      matches.push({id,days:daysDiff(d.startDate)});
+    }
+  }
+  if(!matches.length)return null;
+  matches.sort((a,b)=>b.days-a.days);
+  return matches[0].id;
+}
+
+/* ── Site selection (panel) ───────────────────────── */
+function selectSite(id){
+  selectedPanelId=id;
+  const d=allSitesData[id];
+  if(!d)return;
+  renderPanel(id,d);
+  updateMapMarkers();
+  renderCarousel(allSitesData,Object.keys(allSitesData));
+  setTimeout(()=>{
+    const card=document.getElementById('cc-'+id);
+    if(card)card.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+  },50);
+  document.getElementById('btn-view-detail').onclick=()=>openSite(id);
+}
+
+function renderPanel(id,d){
+  const days=daysDiff(d.startDate),si=STATUS[getStatusIdx(days)];
+  document.getElementById('panel-welcome').style.display='none';
+  const ps=document.getElementById('panel-site');
+  ps.style.display='flex';
+  ps.classList.remove('visible');
+  void ps.offsetWidth;
+  ps.classList.add('visible');
+
+  document.getElementById('panel-name').textContent=d.name;
+  document.getElementById('panel-loc').innerHTML='📍 '+(d.location||'—');
+  document.getElementById('panel-badge').textContent=si.icon+' '+si.label;
+  document.getElementById('panel-badge').style.cssText=`background:${si.bg};color:${si.color}`;
+  document.getElementById('panel-days').textContent=days;
+  document.getElementById('panel-days').style.color=si.counterColor;
+  document.getElementById('panel-tagline').textContent=si.desc;
+  document.getElementById('panel-start').textContent=fmtDate(d.startDate);
+  document.getElementById('panel-record').textContent=d.record>0?d.record+' j':'—';
+  document.getElementById('panel-last').textContent=dateVeille(d.startDate);
+  const rp=document.getElementById('panel-record-pill');
+  rp.style.display=days>0&&days>=(d.record||0)?'flex':'none';
+}
+
+/* ── Carousel navigation ──────────────────────────── */
+function carouselPrev(){
+  const t=document.getElementById('carousel-track');
+  t.scrollBy({left:-220,behavior:'smooth'});
+}
+function carouselNext(){
+  const t=document.getElementById('carousel-track');
+  t.scrollBy({left:220,behavior:'smooth'});
+}
+
+/* ── Site detail carousel ────────────────────────── */
+function getSortedSiteIds(){
+  return Object.keys(allSitesData).sort((a,b)=>daysDiff(allSitesData[b].startDate)-daysDiff(allSitesData[a].startDate));
+}
+
+function updateNavCounter(){
+  const ids=getSortedSiteIds();
+  const idx=ids.indexOf(currentSiteId);
+  const el=document.getElementById('nav-site-idx');
+  if(el)el.textContent=(idx>=0?idx+1:1)+' / '+ids.length;
+}
+
+function prevSite(){
+  const ids=getSortedSiteIds();
+  const idx=ids.indexOf(currentSiteId);
+  const prevId=idx>0?ids[idx-1]:ids[ids.length-1];
+  if(prevId&&prevId!==currentSiteId)switchSite(prevId,'right');
+}
+function nextSite(){
+  const ids=getSortedSiteIds();
+  const idx=ids.indexOf(currentSiteId);
+  const nextId=idx<ids.length-1?ids[idx+1]:ids[0];
+  if(nextId&&nextId!==currentSiteId)switchSite(nextId,'left');
+}
+
+function switchSite(newId,dir){
+  if(!allSitesData[newId])return;
+  const countEl=document.getElementById('count');
+  const statsEl=document.querySelector('.stats-row');
+  const exitCls=dir==='left'?'slide-exit-left':'slide-exit-right';
+  const enterCls=dir==='left'?'slide-enter-right':'slide-enter-left';
+
+  // Exit animation
+  countEl.classList.add(exitCls);
+  if(statsEl)statsEl.classList.add('fade-out');
+
+  setTimeout(()=>{
+    if(detailListener)sitesRef.child(currentSiteId).off('value',detailListener);
+    currentSiteId=newId; detailSIdx=-1;
+    // Enter animation (applied before content renders)
+    countEl.classList.remove(exitCls);
+    countEl.classList.add(enterCls);
+    if(statsEl){statsEl.classList.remove('fade-out');statsEl.classList.add('fade-in');}
+    detailListener=sitesRef.child(newId).on('value',snap=>{
+      const d=snap.val();if(!d){goToDashboard();return;}renderDetail(newId,d);
+    });
+    setTimeout(()=>{
+      countEl.classList.remove(enterCls);
+      if(statsEl)statsEl.classList.remove('fade-in');
+    },320);
+    updateNavCounter();
+  },200);
+}
+
+/* ══════════════════════════════════════════════════════
+   NAVIGATION
+══════════════════════════════════════════════════════ */
+function showScreen(n){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('screen-'+n).classList.add('active');}
+function goToDashboard(){
+  if(currentSiteId&&detailListener)sitesRef.child(currentSiteId).off('value',detailListener);
+  detailListener=null;currentSiteId=null;
+  showScreen('dashboard');
+}
+function openSite(id){
+  if(currentSiteId&&detailListener)sitesRef.child(currentSiteId).off('value',detailListener);
+  currentSiteId=id;detailSIdx=-1;showScreen('site');
+  detailListener=sitesRef.child(id).on('value',snap=>{const d=snap.val();if(!d){goToDashboard();return;}renderDetail(id,d);});
+  setTimeout(updateNavCounter,80);
+}
+
+function renderDetail(id,d){
+  const days=daysDiff(d.startDate),si=STATUS[getStatusIdx(days)];
+  document.getElementById('nav-site-name').textContent=d.name;
+  document.getElementById('nav-site-loc').textContent=d.location?'· '+d.location:'';
+  document.getElementById('detail-site-label').textContent=d.location?d.name+' — '+d.location:d.name;
+  const cn=document.getElementById('count');
+  cn.textContent=days;cn.style.color=si.counterColor;
+  document.getElementById('start-date').textContent=fmtDate(d.startDate);
+  document.getElementById('record-val').textContent=d.record>0?d.record+' j':'—';
+  document.getElementById('last-accident').textContent=dateVeille(d.startDate);
+  document.getElementById('counter-tagline').textContent=si.desc;
+  document.getElementById('status-icon').textContent=si.icon;
+  document.getElementById('status-name').textContent=si.label;
+  document.getElementById('status-name').style.color=si.color;
+  document.getElementById('status-desc').textContent=si.desc;
   document.getElementById('record-pill').classList.toggle('visible',days>0&&days>=(d.record||0));
-  for(let i=0;i<5;i++) document.getElementById('si'+i).classList.toggle('active',i===getStatusIdx(days));
+  for(let i=0;i<5;i++)document.getElementById('si'+i).classList.toggle('active',i===getStatusIdx(days));
   const mi=getStatusIdx(days);
   if(mi!==detailSIdx){
     detailSIdx=mi;
     const tag=document.getElementById('ticker-tag');
-    tag.style.background=si.tagBg; tag.style.color=si.tagColor;
+    tag.style.background=si.tagBg;tag.style.color=si.tagColor;
     document.getElementById('tick1').textContent=si.ticker;
     document.getElementById('tick2').textContent=si.ticker;
     const track=document.getElementById('ticker-track');
-    track.style.animation='none'; void track.offsetWidth; track.style.animation='tickScroll 26s linear infinite';
+    track.style.animation='none';void track.offsetWidth;track.style.animation='tickScroll 26s linear infinite';
   }
 }
 
-// PIN
+/* ══════════════════════════════════════════════════════
+   PIN SYSTEM
+══════════════════════════════════════════════════════ */
 let currentPin='1234',pinBuffer='',pinAction='',pinMode='auth',newPinBuffer='';
 configRef.child('pin').once('value').then(s=>{if(s.val())currentPin=s.val();});
-const PIN_LABELS={edit:'Modifier le compteur',reset:'Signaler un accident',purge:'Réinitialisation totale','add-site':'Ajouter un centre','del-site':'Supprimer un centre'};
-function askWithPin(action){ pinAction=action;pinMode='auth';pinReset(); document.getElementById('pin-subtitle').textContent=PIN_LABELS[action]||''; document.getElementById('pin-change-btn').style.display='block'; document.getElementById('pin-overlay').classList.add('active'); }
-function startChangePin(){ pinMode='change-old';newPinBuffer='';pinReset(); document.getElementById('pin-subtitle').textContent='Ancien code PIN'; document.getElementById('pin-change-btn').style.display='none'; }
-function pinReset(){ pinBuffer=''; for(let i=0;i<4;i++)document.getElementById('pd'+i).classList.remove('filled'); document.getElementById('pin-error').textContent=''; }
-function pinKey(k){ if(k==='C'){if(pinBuffer.length){pinBuffer=pinBuffer.slice(0,-1);pinRefresh();}return;} if(pinBuffer.length>=4)return; pinBuffer+=k;pinRefresh(); if(pinBuffer.length===4)setTimeout(pinValidate,120); }
-function pinRefresh(){ for(let i=0;i<4;i++)document.getElementById('pd'+i).classList.toggle('filled',i<pinBuffer.length); }
+const PIN_LABELS={edit:'Modifier le compteur',reset:'Signaler un accident',purge:'Réinitialisation totale',settings:'Accéder aux réglages','del-site':'Supprimer un centre'};
+
+/* ══════════════════════════════════════════════════════
+   SETTINGS
+══════════════════════════════════════════════════════ */
+function openSettings(){
+  renderSettingsSites();
+  hideSettingsAddForm();
+  document.getElementById('settings-overlay').classList.add('active');
+}
+
+function renderSettingsSites(){
+  const list=document.getElementById('settings-sites-list');
+  if(!list)return;
+  const ids=Object.keys(allSitesData).sort((a,b)=>daysDiff(allSitesData[b].startDate)-daysDiff(allSitesData[a].startDate));
+  if(!ids.length){
+    list.innerHTML='<div style="text-align:center;color:var(--muted);font-size:0.78rem;padding:16px 0">Aucun centre configuré</div>';
+    return;
+  }
+  list.innerHTML=ids.map(id=>{
+    const s=allSitesData[id];
+    const days=daysDiff(s.startDate);
+    const si=STATUS[getStatusIdx(days)];
+    return`<div class="settings-site-row">
+      <div class="settings-site-info">
+        <div class="settings-site-name">${escHtml(s.name)}</div>
+        <div class="settings-site-loc">${s.location?'📍 '+escHtml(s.location):'Aucune localisation'}</div>
+      </div>
+      <div class="settings-site-badge" style="background:${si.bg};color:${si.color}">${si.icon} ${days} j</div>
+      <button class="btn-site-edit" onclick="openEditSiteInfo('${id}')" title="Modifier">✎</button>
+      <button class="btn-site-del" onclick="askDeleteSiteFromSettings('${id}')" title="Supprimer">🗑</button>
+    </div>`;
+  }).join('');
+}
+
+/* Add site from settings */
+function switchSettingsTab(mode){['days','date'].forEach(m=>{document.getElementById('settings-tab-'+m).classList.toggle('active',m===mode);document.getElementById('settings-panel-'+m).classList.toggle('active',m===mode);});}
+function showSettingsAddForm(){
+  document.getElementById('settings-add-form').classList.add('visible');
+  document.getElementById('btn-settings-add-trigger').style.display='none';
+  document.getElementById('settings-new-name').value='';
+  document.getElementById('settings-new-loc').value='';
+  document.getElementById('settings-new-days').value='0';
+  document.getElementById('settings-new-date').value='';
+  switchSettingsTab('days');
+  setTimeout(()=>document.getElementById('settings-new-name').focus(),80);
+}
+function hideSettingsAddForm(){
+  const f=document.getElementById('settings-add-form');
+  if(f)f.classList.remove('visible');
+  const b=document.getElementById('btn-settings-add-trigger');
+  if(b)b.style.display='flex';
+}
+function confirmAddSiteFromSettings(){
+  const name=document.getElementById('settings-new-name').value.trim();
+  if(!name){document.getElementById('settings-new-name').focus();return;}
+  const loc=document.getElementById('settings-new-loc').value.trim();
+  let startDate,days=0;
+  if(document.getElementById('settings-panel-date').classList.contains('active')){
+    const dv=document.getElementById('settings-new-date').value;if(!dv){document.getElementById('settings-new-date').focus();return;}
+    startDate=new Date(new Date(dv+'T12:00:00').getTime()+86400000).toISOString();
+    days=Math.max(0,Math.floor((Date.now()-new Date(startDate).getTime())/86400000));
+  } else {
+    days=parseInt(document.getElementById('settings-new-days').value)||0;
+    startDate=new Date(Date.now()-days*86400000).toISOString();
+  }
+  sitesRef.push().set({name,location:loc,startDate,record:days});
+  hideSettingsAddForm();
+  setTimeout(renderSettingsSites,600);
+}
+
+/* Edit site info */
+let editingSiteId=null;
+function openEditSiteInfo(id){
+  editingSiteId=id;
+  const d=allSitesData[id];
+  if(!d)return;
+  document.getElementById('esi-name').value=d.name||'';
+  document.getElementById('esi-loc').value=d.location||'';
+  document.getElementById('esi-days').value=daysDiff(d.startDate);
+  document.getElementById('edit-siteinfo-overlay').classList.add('active');
+}
+function saveSiteInfo(){
+  if(!editingSiteId)return;
+  const name=document.getElementById('esi-name').value.trim();
+  if(!name)return;
+  const loc=document.getElementById('esi-loc').value.trim();
+  const days=parseInt(document.getElementById('esi-days').value)||0;
+  const startDate=new Date(Date.now()-days*86400000).toISOString();
+  const d=allSitesData[editingSiteId]||{};
+  const newRecord=days>(d.record||0)?days:(d.record||0);
+  sitesRef.child(editingSiteId).update({name,location:loc,startDate,record:newRecord});
+  closeOverlay('edit-siteinfo-overlay');
+  setTimeout(renderSettingsSites,400);
+  editingSiteId=null;
+}
+
+/* Delete from settings */
+function askDeleteSiteFromSettings(id){
+  pendingDeleteId=id;
+  const d=allSitesData[id];
+  document.getElementById('del-site-text').textContent=d?`Voulez-vous supprimer « ${d.name} » ? Toutes ses données seront perdues.`:'Toutes les données seront supprimées.';
+  document.getElementById('del-site-overlay').classList.add('active');
+}
+/* Override confirmDeleteSite to also refresh settings */
+const _origConfirmDelete=typeof confirmDeleteSite==='function'?confirmDeleteSite:null;
+function askWithPin(action){pinAction=action;pinMode='auth';pinReset();document.getElementById('pin-subtitle').textContent=PIN_LABELS[action]||'';document.getElementById('pin-change-btn').style.display='block';document.getElementById('pin-overlay').classList.add('active');}
+function startChangePin(){pinMode='change-old';newPinBuffer='';pinReset();document.getElementById('pin-subtitle').textContent='Ancien code PIN';document.getElementById('pin-change-btn').style.display='none';}
+function pinReset(){pinBuffer='';for(let i=0;i<4;i++)document.getElementById('pd'+i).classList.remove('filled');document.getElementById('pin-error').textContent='';}
+function pinKey(k){if(k==='C'){if(pinBuffer.length){pinBuffer=pinBuffer.slice(0,-1);pinRefresh();}return;}if(pinBuffer.length>=4)return;pinBuffer+=k;pinRefresh();if(pinBuffer.length===4)setTimeout(pinValidate,120);}
+function pinRefresh(){for(let i=0;i<4;i++)document.getElementById('pd'+i).classList.toggle('filled',i<pinBuffer.length);}
 function pinValidate(){
   if(pinMode==='auth'){
-    if(pinBuffer===currentPin){ closeOverlay('pin-overlay');pinReset(); if(pinAction==='edit')openEdit(); else if(pinAction==='reset')askReset(); else if(pinAction==='purge')askPurge(); else if(pinAction==='add-site')openAddSite(); else if(pinAction==='del-site')openDelSite(); }
-    else{ document.getElementById('pin-error').textContent='Code incorrect'; setTimeout(pinReset,900); }
-  } else if(pinMode==='change-old'){
+    if(pinBuffer===currentPin){closeOverlay('pin-overlay');pinReset();if(pinAction==='edit')openEdit();else if(pinAction==='reset')askReset();else if(pinAction==='purge')askPurge();else if(pinAction==='settings')openSettings();else if(pinAction==='del-site')openDelSite();}
+    else{document.getElementById('pin-error').textContent='Code incorrect';setTimeout(pinReset,900);}
+  }else if(pinMode==='change-old'){
     if(pinBuffer===currentPin){pinMode='change-new';pinReset();document.getElementById('pin-subtitle').textContent='Nouveau code PIN';}
     else{document.getElementById('pin-error').textContent='Code incorrect';setTimeout(pinReset,900);}
-  } else if(pinMode==='change-new'){
+  }else if(pinMode==='change-new'){
     newPinBuffer=pinBuffer;pinMode='change-confirm';pinReset();document.getElementById('pin-subtitle').textContent='Confirmer le nouveau code';
-  } else if(pinMode==='change-confirm'){
-    if(pinBuffer===newPinBuffer){currentPin=newPinBuffer;configRef.child('pin').set(currentPin);closeOverlay('pin-overlay');pinReset();pinMode='auth';newPinBuffer='';const e=document.getElementById('pin-error');e.style.color='#22c55e';e.textContent='Code modifié ✓';}
+  }else if(pinMode==='change-confirm'){
+    if(pinBuffer===newPinBuffer){currentPin=newPinBuffer;configRef.child('pin').set(currentPin);closeOverlay('pin-overlay');pinReset();pinMode='auth';newPinBuffer='';const e=document.getElementById('pin-error');e.style.color='var(--green)';e.textContent='Code modifié ✓';}
     else{document.getElementById('pin-error').textContent='Les codes ne correspondent pas';setTimeout(()=>{pinMode='change-new';newPinBuffer='';pinReset();document.getElementById('pin-subtitle').textContent='Nouveau code PIN';},900);}
   }
 }
 
-// Add site
-function openAddSite(){ document.getElementById('new-site-name').value='';document.getElementById('new-site-loc').value='';document.getElementById('new-site-days').value='0';document.getElementById('new-site-date').value='';switchAddTab('days');document.getElementById('add-site-overlay').classList.add('active');setTimeout(()=>document.getElementById('new-site-name').focus(),80); }
-function switchAddTab(mode){
-  ['days','date'].forEach(m=>{
-    document.getElementById('add-tab-'+m).classList.toggle('active',m===mode);
-    document.getElementById('add-panel-'+m).classList.toggle('active',m===mode);
-  });
-}
-function confirmAddSite(){
-  const name=document.getElementById('new-site-name').value.trim(); if(!name){document.getElementById('new-site-name').focus();return;}
-  const loc=document.getElementById('new-site-loc').value.trim();
-  let startDate, days=0;
-  const addPanelDate=document.getElementById('add-panel-date');
-  if(addPanelDate.classList.contains('active')){
-    const dateVal=document.getElementById('new-site-date').value;
-    if(!dateVal){document.getElementById('new-site-date').focus();return;}
-    const accDate=new Date(dateVal+'T12:00:00');
-    startDate=new Date(accDate.getTime()+86400000).toISOString();
-    days=Math.max(0,Math.floor((Date.now()-new Date(startDate).getTime())/86400000));
-  } else {
-    days=parseInt(document.getElementById('new-site-days').value)||0;
-    startDate=new Date(Date.now()-days*86400000).toISOString();
-  }
-  sitesRef.push().set({name,location:loc,startDate,record:days}); closeOverlay('add-site-overlay');
-}
+/* ══════════════════════════════════════════════════════
+   SITE CRUD
+══════════════════════════════════════════════════════ */
+/* Add */
+function openAddSite(){document.getElementById('new-site-name').value='';document.getElementById('new-site-loc').value='';document.getElementById('new-site-days').value='0';document.getElementById('add-site-overlay').classList.add('active');setTimeout(()=>document.getElementById('new-site-name').focus(),80);}
+function confirmAddSite(){const name=document.getElementById('new-site-name').value.trim();if(!name){document.getElementById('new-site-name').focus();return;}const loc=document.getElementById('new-site-loc').value.trim(),days=parseInt(document.getElementById('new-site-days').value)||0,startDate=new Date(Date.now()-days*86400000).toISOString();sitesRef.push().set({name,location:loc,startDate,record:days});closeOverlay('add-site-overlay');}
 document.getElementById('new-site-name').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('new-site-loc').focus();});
 document.getElementById('new-site-loc').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('new-site-days').focus();});
 document.getElementById('new-site-days').addEventListener('keydown',e=>{if(e.key==='Enter')confirmAddSite();if(e.key==='Escape')closeOverlay('add-site-overlay');});
 
-// Delete site
+/* Delete */
 let pendingDeleteId=null;
 function askDeleteSite(id){pendingDeleteId=id;askWithPin('del-site');}
-function openDelSite(){ const d=allSitesData[pendingDeleteId]; document.getElementById('del-site-text').textContent=d?`Voulez-vous supprimer « ${d.name} » ? Toutes ses données seront perdues.`:'Toutes les données seront supprimées.'; document.getElementById('del-site-overlay').classList.add('active'); }
-function confirmDeleteSite(){ if(pendingDeleteId){sitesRef.child(pendingDeleteId).remove();if(currentSiteId===pendingDeleteId)goToDashboard();pendingDeleteId=null;} closeOverlay('del-site-overlay'); }
-
-// Reset
-function askReset(){ document.getElementById('accident-date').value=new Date().toISOString().split('T')[0]; document.getElementById('confirm-overlay').classList.add('active'); }
-function confirmReset(){
-  const dateVal=document.getElementById('accident-date').value; if(!dateVal||!currentSiteId)return; closeOverlay('confirm-overlay');
-  sitesRef.child(currentSiteId).once('value').then(snap=>{ const d=snap.val()||{startDate:new Date().toISOString(),record:0}; const days=daysDiff(d.startDate),newRecord=days>(d.record||0)?days:(d.record||0),newStart=new Date(new Date(dateVal+'T12:00:00').getTime()+86400000).toISOString(); sitesRef.child(currentSiteId).update({startDate:newStart,record:newRecord}); const el=document.getElementById('count'); el.classList.remove('flash');void el.offsetWidth;el.classList.add('flash');setTimeout(()=>el.classList.remove('flash'),1500); });
+function openDelSite(){const d=allSitesData[pendingDeleteId];document.getElementById('del-site-text').textContent=d?`Voulez-vous supprimer « ${d.name} » ? Toutes ses données seront perdues.`:'Toutes les données seront supprimées.';document.getElementById('del-site-overlay').classList.add('active');}
+function confirmDeleteSite(){
+  if(pendingDeleteId){
+    sitesRef.child(pendingDeleteId).remove();
+    if(currentSiteId===pendingDeleteId)goToDashboard();
+    if(selectedPanelId===pendingDeleteId){selectedPanelId=null;document.getElementById('panel-welcome').style.display='flex';document.getElementById('panel-site').style.display='none';}
+    pendingDeleteId=null;
+  }
+  closeOverlay('del-site-overlay');
+  setTimeout(renderSettingsSites,400);
 }
 
-// Edit
-function switchEditTab(mode){
-  ['days','date'].forEach(m=>{
-    document.getElementById('edit-tab-'+m).classList.toggle('active',m===mode);
-    document.getElementById('edit-panel-'+m).classList.toggle('active',m===mode);
+/* Reset */
+function askReset(){document.getElementById('accident-date').value=new Date().toISOString().split('T')[0];document.getElementById('confirm-overlay').classList.add('active');}
+function confirmReset(){
+  const dateVal=document.getElementById('accident-date').value;if(!dateVal||!currentSiteId)return;closeOverlay('confirm-overlay');
+  sitesRef.child(currentSiteId).once('value').then(snap=>{
+    const d=snap.val()||{startDate:new Date().toISOString(),record:0};
+    const days=daysDiff(d.startDate),newRecord=days>(d.record||0)?days:(d.record||0);
+    const newStart=new Date(new Date(dateVal+'T12:00:00').getTime()+86400000).toISOString();
+    sitesRef.child(currentSiteId).update({startDate:newStart,record:newRecord});
+    const el=document.getElementById('count');el.classList.remove('flash');void el.offsetWidth;el.classList.add('flash');setTimeout(()=>el.classList.remove('flash'),1500);
   });
 }
-function openEdit(){ if(!currentSiteId)return; sitesRef.child(currentSiteId).once('value').then(snap=>{ const d=snap.val(); document.getElementById('days-input').value=d?daysDiff(d.startDate):0; document.getElementById('edit-accident-date').value=''; switchEditTab('days'); document.getElementById('edit-overlay').classList.add('active'); setTimeout(()=>document.getElementById('days-input').select(),50); }); }
+
+/* Edit */
+function switchEditTab(mode){['days','date'].forEach(m=>{document.getElementById('edit-tab-'+m).classList.toggle('active',m===mode);document.getElementById('edit-panel-'+m).classList.toggle('active',m===mode);});}
+function openEdit(){if(!currentSiteId)return;sitesRef.child(currentSiteId).once('value').then(snap=>{const d=snap.val();document.getElementById('days-input').value=d?daysDiff(d.startDate):0;document.getElementById('edit-accident-date').value='';switchEditTab('days');document.getElementById('edit-overlay').classList.add('active');setTimeout(()=>document.getElementById('days-input').select(),50);});}
 function applyEdit(){
-  const editPanelDate=document.getElementById('edit-panel-date');
-  if(editPanelDate.classList.contains('active')){
-    const dateVal=document.getElementById('edit-accident-date').value;
-    if(!dateVal||!currentSiteId){document.getElementById('edit-accident-date').focus();return;}
+  if(document.getElementById('edit-panel-date').classList.contains('active')){
+    const dv=document.getElementById('edit-accident-date').value;if(!dv||!currentSiteId){document.getElementById('edit-accident-date').focus();return;}
     sitesRef.child(currentSiteId).once('value').then(snap=>{
       const d=snap.val()||{record:0};
-      const accDate=new Date(dateVal+'T12:00:00');
-      const startDate=new Date(accDate.getTime()+86400000).toISOString();
+      const startDate=new Date(new Date(dv+'T12:00:00').getTime()+86400000).toISOString();
       const val=Math.max(0,Math.floor((Date.now()-new Date(startDate).getTime())/86400000));
-      const newRecord=val>(d.record||0)?val:(d.record||0);
-      sitesRef.child(currentSiteId).update({startDate,record:newRecord}); closeOverlay('edit-overlay');
+      sitesRef.child(currentSiteId).update({startDate,record:val>(d.record||0)?val:(d.record||0)});closeOverlay('edit-overlay');
     });
-  } else {
-    applyDays();
-  }
+  } else { applyDays(); }
 }
-function applyDays(){ const val=parseInt(document.getElementById('days-input').value); if(isNaN(val)||val<0||!currentSiteId)return; sitesRef.child(currentSiteId).once('value').then(snap=>{ const d=snap.val()||{record:0},startDate=new Date(Date.now()-val*86400000).toISOString(),newRecord=val>(d.record||0)?val:(d.record||0); sitesRef.child(currentSiteId).update({startDate,record:newRecord}); closeOverlay('edit-overlay'); }); }
+function applyDays(){const val=parseInt(document.getElementById('days-input').value);if(isNaN(val)||val<0||!currentSiteId)return;sitesRef.child(currentSiteId).once('value').then(snap=>{const d=snap.val()||{record:0},startDate=new Date(Date.now()-val*86400000).toISOString(),newRecord=val>(d.record||0)?val:(d.record||0);sitesRef.child(currentSiteId).update({startDate,record:newRecord});closeOverlay('edit-overlay');});}
 document.getElementById('days-input').addEventListener('keydown',e=>{if(e.key==='Enter')applyEdit();if(e.key==='Escape')closeOverlay('edit-overlay');});
 
-// Purge
-function askPurge(){ document.getElementById('purge-overlay').classList.add('active'); }
-function confirmPurge(){ sitesRef.remove();closeOverlay('purge-overlay');goToDashboard(); }
+/* Purge */
+function askPurge(){document.getElementById('purge-overlay').classList.add('active');}
+function confirmPurge(){sitesRef.remove();closeOverlay('purge-overlay');goToDashboard();selectedPanelId=null;}
 
-function closeOverlay(id){ document.getElementById(id).classList.remove('active'); }
+function closeOverlay(id){document.getElementById(id).classList.remove('active');}
 
+/* ══════════════════════════════════════════════════════
+   CLOCK
+══════════════════════════════════════════════════════ */
 renderClock();
 setInterval(renderClock,60000);
+
+/* ── SVG map: event delegation (bulletproof click backup) ──────────
+   Catches ALL clicks within the france-map SVG, walks up from the
+   event.target to find the nearest site-marker group, then opens it.
+   This handles edge cases where inline onclick on <g> elements
+   might miss events (e.g. pointer-events:none children falling
+   through to the sea/land background).
+──────────────────────────────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded',function(){
+  const mapSvg=document.getElementById('france-map');
+  if(!mapSvg)return;
+  mapSvg.addEventListener('click',function(e){
+    let el=e.target;
+    let depth=0;
+    while(el&&el!==mapSvg&&depth<12){
+      if(el.classList&&el.classList.contains('site-marker')){
+        const siteId=el.dataset.siteId;
+        const city=el.dataset.city||el.dataset.siteKey;
+        /* Show in right panel, not full screen */
+        if(siteId){selectSite(siteId);return;}
+        if(city){const sid=findSiteIdByCity(city);if(sid){selectSite(sid);return;}}
+      }
+      el=el.parentElement;
+      depth++;
+    }
+  });
+});
 </script>
 </body>
 </html>
