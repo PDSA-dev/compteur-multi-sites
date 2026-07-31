@@ -350,7 +350,7 @@ html,body{
 
 .c-card{
   flex-shrink:0;
-  width:calc(25% - 10px);min-width:180px;
+  width:calc((100% - (var(--cc,4) - 1)*12px)/var(--cc,4));min-width:180px;
   background:var(--glass);
   backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
   border:1.5px solid rgba(255,255,255,0.85);
@@ -1324,6 +1324,7 @@ function renderCarousel(data,ids){
   }
   // Sort by days desc
   ids.sort((a,b)=>daysDiff(data[b].startDate)-daysDiff(data[a].startDate));
+  track.style.setProperty('--cc',ids.length);
   track.innerHTML=ids.map(id=>{
     const s=data[id],days=daysDiff(s.startDate),si=STATUS[getStatusIdx(days)];
     const isActive=id===selectedPanelId;
